@@ -23,7 +23,7 @@ class Sequence_event
   def initialize(seq_event)
     @run_name = seq_event
     if valid?(@run_name) == false
-      puts "run_name is invalid"
+      puts "#{@run_name} is invalid"
       exit 1
     end
   end
@@ -101,6 +101,18 @@ class Sequence_event
     (valid?(r_name) and @run_name == r_name) ? true : false
   end
 
+  def year
+    return ((/^\d+_(\d\d\d\d)\d+_\d_S/).match(@run_name))[1]
+  end
+
+  def month
+    return ((/^\d+_\d\d\d\d(\d\d)\d+_\d_S/).match(@run_name))[1]
+  end
+
+  def rname
+    return ((/^(\d+_\d+_\d_S[L|P])/).match(@run_name))[1]
+  end
+
   private
 
 # Method to validate run_name
@@ -119,7 +131,9 @@ class Sequence_event
 
     if run_name.match(/pA_\d+_\d$/) ||
        run_name.match(/sA_\d+_\d$/) ||
-       run_name.match(/sA_\d+_\d_BC\d+$/) 
+       run_name.match(/sA_\d+_\d_BC\d+$/) ||
+       run_name.match(/pA_\d+_\d_BC\d+$/) ||
+       run_name.match(/sA_\d+_\d_bc\d+$/) 
       valid_suffix = true
     end
     return valid_prefix && valid_suffix
