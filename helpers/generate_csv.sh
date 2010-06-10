@@ -2,16 +2,16 @@
 #
 # Runs the ruby tool to generate csv output of our 
 # SOLiD data. It checks the exit code and sends and
-# email.
+# email
 #
 help()
 {
 	echo "$1"
   cat <<EOF
 Usage:
-  $0 cmd file_to_dump_csv log_file mail_to
+  $0 cmd output_path mail_to
 Example:
-  $0 "./bin/list_system_data.rb /stornext/snfs4/next-gen/solid/analysis" /tmp/foo.csv /tmp/log.txt "deiros@bcm.edu dc12@bcm.edu"
+  $0 "./bin/list_system_data.rb /stornext/snfs4/next-gen/solid/analysis" /tmp "deiros@bcm.edu dc12@bcm.edu"
 EOF
 	exit 1
 }
@@ -44,28 +44,49 @@ EOF
   ) | mail -s "$subject" $mail_to
 }
 
+# point the sym link to the latest csv
+create_symlink()
+{
+  csv_symlink="$output/csv.dump.latest.csv"
+  rm $csv_symlink
+  ln -s $dump_to $csv_symlink
+}
+
 ######################################################
 # Main
 ######################################################
 [ ".$1" == "." ] && help "Error param: cmd"
-[ ".$2" == "." ] && help "Error param: dump_to file"
-[ ".$3" == "." ] && help "Error param: log file"
-[ ".$4" == "." ] && help "Error param: mail_to"
+[ ".$2" == "." ] && help "Error param: output path"
+[ ".$3" == "." ] && help "Error param: mail_to"
 
 cmd="$1"
-dump_to="$2"
-log_file="$3"
-mail_to="$4"
+output="$2"
+mail_to="$3"
+
+
+#create the output path
+year=`date +%Y`
+month=`date +%m`
+day=`date +%d`
+output_path="$output/$year/$month/$day"
+mkdir -p $output_path
+
+# names of the output files
+time_stamp=`date +%F.%T`
+dump_to="$output_path/csv.dump.$time_stamp.csv"
+log_file="$output_path/csv.dump.$time_stamp.log"
 
 started=`date`
 $cmd > $dump_to 2> $log_file &
 wait
 exit_code=$?
+
 finished=`date`
 
 if [ $exit_code -eq 0 ]
 then
   send_email "OK"
+  create_symlink
 	exit 0
 else
   send_email "ERROR"

@@ -110,4 +110,8 @@ email_deps = lsf.add_job("clean_up", cmds.clean_up, "", nil, clean_deps)
 # Email if the analysis went well
 #email_deps = config.global_input_CAP == 0 ? s_deps : [dep]
 lsf.add_job("email_success", cmds.email_success, "", nil, [email_deps])
+
+# saves the finished time stamp
+lsf.add_job("finish_time", "#{File.dirname(File.dirname($0))}/helpers/create_time.sh " +
+						"END time_stamps.txt", "", nil, [email_deps])
 lsf.create_file

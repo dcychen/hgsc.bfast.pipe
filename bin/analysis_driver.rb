@@ -47,16 +47,17 @@ class App
     def parsed_options?
       # Specify options
       opts = OptionParser.new 
-      opts.on('-v', '--version')      { output_version ; exit 0 }
-      opts.on('-h', '--help')         { output_help }
+      opts.on('-v', '--version')        { output_version ; exit 0 }
+      opts.on('-h', '--help')           { output_help }
 
-      opts.on('-r', '--run_name r')   {|r| @options.run_name = r }
-      opts.on('-c', '--c_design c')   {|c| @options.c_design = c }
-      opts.on('-q', '--queue    q')   {|q| @options.queue    = q }
-      opts.on('-a', '--action   a')   {|a| @options.action   = a }
-      opts.on('-f', '--force_mp')     {    @options.force_mp = true }
-      opts.on('-e', '--force_pe')     {    @options.force_pe = true }
-      opts.on('-p', '--pival p')      {|p| @options.pival    = p.upcase }
+      opts.on('-r', '--run_name r')     {|r| @options.run_name = r }
+      opts.on('-c', '--c_design c')     {|c| @options.c_design = c }
+      opts.on('-q', '--queue    q')     {|q| @options.queue    = q }
+      opts.on('-a', '--action   a')     {|a| @options.action   = a }
+      opts.on('-m', '--force_mp')       {    @options.force_mp = true }
+      opts.on('-e', '--force_pe')       {    @options.force_pe = true }
+      opts.on('-n', '--no_trans_check') {    @options.no_trans_check = true }
+      opts.on('-p', '--pival p')        {|p| @options.pival    = p.upcase }
             
       log "Processing arguments"
       opts.parse!(@arguments) rescue return false
@@ -84,17 +85,19 @@ class App
 
     # Place arguments in instance variables
     def process_arguments
-      @r_name   = @options.run_name
-      @sea      = @r_name.nil? ? nil : Sequence_event.new(@r_name)
-      @c_design = @options.c_design || nil
-      @queue    = @options.queue    || "normal"
-      @action   = @options.action
-      @force_mp = @options.force_mp || false
-      @force_pe = @options.force_pe || false
-      @pival    = @options.pival || "STRICT"
+      @r_name         = @options.run_name
+      @sea            = @r_name.nil? ? nil : Sequence_event.new(@r_name)
+      @c_design       = @options.c_design || nil
+      @queue          = @options.queue    || "normal"
+      @action         = @options.action
+      @force_mp       = @options.force_mp || false
+      @force_pe       = @options.force_pe || false
+      @no_trans_check = @options.no_trans_check || false
+      @pival          = @options.pival || "STRICT"
       log "picard validation mode: #{@pival}"
       log "Forcing MP mode detected" if @force_mp
       log "Forcing PE mode detected" if @force_pe
+      log "No transfer file check detected" if @no_trans_check
     end
     
     def output_help
@@ -126,14 +129,15 @@ class App
 
     def params_to_hash
       {
-        :r_name   => @r_name  ,
-        :c_design => @c_design,
-        :queue    => @queue   ,
-        :action   => @action  ,
-        :sea      => @sea     ,
-        :force_mp => @force_mp,
-        :force_pe => @force_pe,
-        :pival    => @pival  ,
+        :r_name         => @r_name  ,
+        :c_design       => @c_design,
+        :queue          => @queue   ,
+        :action         => @action  ,
+        :sea            => @sea     ,
+        :force_mp       => @force_mp,
+        :force_pe       => @force_pe,
+        :no_trans_check => @no_trans_check,
+        :pival          => @pival  ,
       }
     end
 
@@ -155,17 +159,18 @@ Usage:
   analysis_driver.rb [options]
 
 Options:
- -h, --help          Displays help message
- -v, --version       Display the version, then exit
+ -h, --help           Displays help message
+ -v, --version        Display the version, then exit
 
- -r, --run_name      Run_name
- -a, --action        action to perform 
+ -r, --run_name       Run_name
+ -a, --action         action to perform 
 
- -f, --force_mp      Force MP despite the SE is a PE
- -e, --force_pe      Force PE despite the SE is a FR
- -c, --c_design      capture_design
- -q, --queue         cluster queue     [normal]
- -p, --pival         Picard validation [STRINGENT] (STRICT|LENIENT|SILENT)
+ -m, --force_mp       Force MP despite the SE is a PE
+ -e, --force_pe       Force PE despite the SE is a FR
+ -n, --no_trans_check Force analysis without checking raw data transfer
+ -c, --c_design       capture_design
+ -q, --queue          cluster queue     [normal]
+ -p, --pival          Picard validation [STRINGENT] (STRICT|LENIENT|SILENT)
 
 Valid actions:
  create: create the analysis dir and config file

@@ -145,7 +145,7 @@ class YS_Global
   include ResolveDynamicKeys
   attr_accessor :global_options
 
-  @@pathPrefix = "/stornext/snfs1/next-gen/software/"
+  @@pathPrefix = "/stornext/snfs5/next-gen/software/"
 
   def initialize
     @global_options = { 
@@ -175,8 +175,8 @@ class YS_Global
   end
 
   def getBfastBinary()
-    return "/stornext/snfs1/next-gen/drio-scratch/" +  
-           "bfast_related/versions/production/bfast"
+    return "/stornext/snfs5/next-gen/software/" +  
+           "bfast/versions/production/bfast"
   end
 
   def getSamtoolsBinary()
@@ -297,7 +297,7 @@ class YS_Header
   end
 
   def buildJarName
-    path = "/stornext/snfs1/next-gen/solid/hgsc.solid.pipeline/bam.header.creation/"
+    path = "/stornext/snfs5/next-gen/solid/hgsc.solid.pipeline/bam.header.creation/"
     jar = "bam.header.creation.jar"
     return path + jar
   end
@@ -314,7 +314,7 @@ class YS_Stats
   end
 
   def buildJarName()
-    jarPath = "/stornext/snfs1/next-gen/solid/hgsc.solid.pipeline/BAMStats/"
+    jarPath = "/stornext/snfs5/next-gen/solid/hgsc.solid.pipeline/BAMStats/"
     jarName = "BAMStats.jar"
     return jarPath + jarName
   end
@@ -331,7 +331,7 @@ class YS_CountReads
   end
 
   def buildJarName()
-    jarPath = "/stornext/snfs1/next-gen/solid/hgsc.solid.pipeline/raw.bam.reads.validator/"
+    jarPath = "/stornext/snfs5/next-gen/solid/hgsc.solid.pipeline/raw.bam.reads.validator/"
     jarName = "raw.bam.reads.validator.jar"
     return jarPath + jarName
   end
@@ -352,9 +352,9 @@ class YS_Capture
   end
 
   def buildClassPath()
-    samPath = "/stornext/snfs1/next-gen/software/hgsc/capture_stats/sam-1.07.jar"
-    picPath = "/stornext/snfs1/next-gen/software/hgsc/capture_stats/picard-1.07.jar"
-    capPath = "/stornext/snfs1/next-gen/software/hgsc/capture_stats"
+    samPath = "/stornext/snfs5/next-gen/software/hgsc/capture_stats/sam-1.07.jar"
+    picPath = "/stornext/snfs5/next-gen/software/hgsc/capture_stats/picard-1.07.jar"
+    capPath = "/stornext/snfs5/next-gen/software/hgsc/capture_stats"
     return samPath + ":" + picPath + ":"  + capPath + ":."
  end
 end
@@ -379,7 +379,7 @@ class YS_Success
 
   def initialize
   @success_options = {
-                       'email_to' => "deiros@bcm.edu niravs@bcm.edu pellon@bcm.edu" ,
+                       'email_to' => "pc2@bcm.edu pellon@bcm.edu" ,
                      }
   end
 end

@@ -277,7 +277,7 @@ class Se_inst
       else 
         Helpers::log("Searching for files on instrument..")
         files = ssh.exec! "find /*/r*/solid*/*/*/r*.*/lib*/ -follow " +
-                          "-name \"*3*fasta\" -o -name \"*3*qual\" " +
+                          "-name \"*csfasta\" -o -name \"*qual\" " +
                           "-o -name \"*Stat*txt\""
       end
     end

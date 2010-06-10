@@ -122,4 +122,16 @@ module Helpers
     cmd << "chmod 755 ./go.sh\n"
     cmd << "./go.sh\n"
   end
+  
+  def self.transfered?(sea)
+    machine = "solid#{sea.to_s.slice(0,4)}"
+    done_slides = "#{ENV['HOME']}/.hgsc_solid/#{machine}/" +
+                  "#{machine}_done_slides.txt"
+    if File.exist?(done_slides)
+      known = File.open(done_slides).readlines.map!{ |e| e.chomp }
+      return known.include?(sea.to_s)
+    else
+      Helpers::log "#{done_slides} cannot be found", 1
+    end
+  end
 end

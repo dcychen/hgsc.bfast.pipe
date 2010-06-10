@@ -3,7 +3,8 @@ class SEA_create
   end
 
   def run(params)
-    perform_create(params[:sea], params[:c_design], params[:force_mp], params[:force_pe], params[:pival])
+    perform_create(params[:sea], params[:c_design], params[:force_mp], 
+                   params[:force_pe], params[:pival], params[:no_trans_check])
   end
 
   private
@@ -25,7 +26,7 @@ class SEA_create
     sds.each_with_index {|s,i| Helpers::log("#{i}. #{s}", 1) }
   end
 
-  def perform_create(sea, c_design, force_mp, force_pe, pival)
+  def perform_create(sea, c_design, force_mp, force_pe, pival, no_trans_check)
     # A. check /stornext/snfs(1/4)/next-gen/solid/analysis/solid0312 to see 
     #    if the SEA directory exists. 
     #    Bail out: printing the path to the SEA dir found.
@@ -52,6 +53,8 @@ class SEA_create
     Helpers::log("# of raw data files found: (#{raw_data.size})")
     if raw_data.size == 0
       Helpers::log("There is no raw data. Bailing out", 1)
+    elsif !Helpers::transfered?(sea) && !no_trans_check
+      Helpers::log("The raw data have not been fully transferred", 1)
     elsif sea.mp? and raw_data.size != 4 
       dump_raw_data_found(raw_data)
       Helpers::log("SEA is MP but raw data != 4 (#{raw_data.size})", 1)

@@ -2,22 +2,22 @@ input_options:
  run_name: __RN__
 global_options:
  bwaaln: __PE__
- dist_dir: /stornext/snfs1/next-gen/solid/hgsc.solid.pipeline/hgsc.bfast.pipe
+ dist_dir: /stornext/snfs5/next-gen/solid/hgsc.solid.pipeline/hgsc.bfast.pipe
  input_MP: __IMP__
  input_CAP: __ICAP__
- lsf_queue: normal
+ moab_queue: normal
  picard_validation: __PIVAL__
  threads: 8
- bfast_bin: /stornext/snfs1/next-gen/drio-scratch/bfast_related/versions/bfast-0.6.4d/bfast
- bfast2_bin: /stornext/snfs1/next-gen/drio-scratch/bfast_related/versions/bfast.git.bfast2/bfast
- samtools_bin: /stornext/snfs1/next-gen/software/samtools-0.1.6
- picardjars: /stornext/snfs1/next-gen/software/picard-tools/current
- java_vm: /stornext/snfs1/next-gen/software/jdk1.6.0_01/bin/java
+ bfast_bin: /stornext/snfs5/next-gen/software/bfast/versions/bfast-0.6.4d/bfast
+ bfast2_bin: /stornext/snfs5/next-gen/software/bfast/versions/bfast.git.bfast2/bfast
+ samtools_bin: /stornext/snfs5/next-gen/software/samtools-0.1.6
+ picardjars: /stornext/snfs5/next-gen/software/picard-tools/current
+ java_vm: /stornext/snfs5/next-gen/software/jdk1.6.0_01/bin/java
  trackdir: ./track_jobs
  space: CS
  fasta_file_name: /stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/hsap_36.1_hg18.fa
  timing: ON
- logs_dir: ./lsf_logs
+ logs_dir: ./moab_logs
  run_dir: __RUN_DIR__
  reads_dir: __READS_DIR__
  output_dir: __OUTPUT_DIR__
@@ -28,16 +28,16 @@ global_options:
  compress_splits: none
 match_options:
  threads: 8
- lsf_resources: "rusage[mem=28000]span[hosts=1]"
+ moab_resources: "nodes=1,pmem=28000mb"
 bwaaln_options:
  threads: 8
- prefix: /stornext/snfs4/next-gen/solid/bf.references/h/hsap.36.1.hg18/bwaaln/hsap_36.1_hg18.fa
+ prefix: /stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/bwaaln/hsap_36.1_hg18.fa
 local_options:
  threads: 8
- lsf_resources: "rusage[mem=28000]span[hosts=1]"
+ moab_resources: "nodes=1,pmem=28000mb"
 post_options:
  algorithm: 4
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
  rg_id:
  rg_pl: 
  rg_pu: 
@@ -47,29 +47,29 @@ post_options:
  rg_sm: 
  rg_cn: Baylor
 tobam_options:
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
  java_vm_mem:   "4g"
 sort_options:
- lsf_resources: "rusage[mem=8000]"
+ moab_resources: "pmem=8000mb"
  java_vm_mem: "8g"
 dups_options:
- lsf_resources: "rusage[mem=8000]"
+ moab_resources: "pmem=8000mb"
  java_vm_mem: "8g"
 final_options:
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
 header_options:
  regen_jar: java/bam.header.creation/bam.header.creation.jar
  sq_type: hsap36.1
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
 stats_options:
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
  s_jar: java/BAMStats/BAMStats.jar
 capture_options:
  stats_dir: "cap_stats"
- j_classpath: "/stornext/snfs1/next-gen/software/hgsc/capture_stats/sam-1.07.jar:/stornext/snfs1/next-gen/software/hgsc/capture_stats/picard-1.07.jar:/stornext/snfs1/next-gen/software/hgsc/capture_stats:."
+ j_classpath: "/stornext/snfs5/next-gen/software/hgsc/capture_stats/sam-1.07.jar:/stornext/snfs5/next-gen/software/hgsc/capture_stats/picard-1.07.jar:/stornext/snfs5/next-gen/software/hgsc/capture_stats:."
  chip_design: __CD__
- lsf_resources: "rusage[mem=4000]"
+ moab_resources: "pmem=4000mb"
 countreads_options:
  bam_reads_val_jar: java/raw.bam.reads.validator/raw.bam.reads.validator.jar
 success_options:
- email_to: "deiros@bcm.edu niravs@bcm.edu mp@p3ll0n.net gokwuonu@bcm.tmc.edu jirehs@bcm.tmc.edu pc2@bcm.edu"
+ email_to: "pellon@bcm.edu gokwuonu@bcm.edu jirehs@bcm.edu pc2@bcm.edu"

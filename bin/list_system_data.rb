@@ -5,9 +5,11 @@
 # Dumps to csv (STDOUT) all the info about the SEAs
 # 
 # 
+$:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+
 require 'ostruct'
 require 'find'
-require 'lib/helpers'
+require 'helpers'
 
 # this is the list of valid keys to expect in the 
 # stats files
@@ -20,7 +22,7 @@ KEYS_PER_TAG = %w{
 
 # csv header
 HEADER = %w{
-  name bam_path 
+  name start end bam_path 
   F3_total_reads_considered F3_total_reads_mapped F3_throughput F3_effective_throughput
   R3_total_reads_considered R3_total_reads_mapped R3_throughput R3_effective_throughput
 }
@@ -87,7 +89,7 @@ def to_hash(files)
   # Load files 
   files.each {|fn| data << File.open(fn).read }
 
-  # Gets the key values
+ # Gets the key values
   data.scan(/^([F3|R3]\w+): ([,\w]+)$/).each do |m| 
     key, value = m
     unless KEYS_PER_TAG.include?(key.gsub(/R3|F3/, "XX"))
@@ -105,6 +107,7 @@ end
 def dump_csv_line(sea_dir, bams, stats)
   delimiter = ", "
   csv_line = sea_dir.split("/")[-1] + DELIMITER
+  csv_line << start_end_time_output(sea_dir) + DELIMITER
   csv_line << bams[0] + DELIMITER
   tags = stats.size == 4 ? [ "F3" ] : [ "F3", "R3" ]
 
@@ -117,8 +120,26 @@ def dump_csv_line(sea_dir, bams, stats)
       csv_line << stats[key].gsub(/,/,".") + DELIMITER
     end
   end
-  
+#  csv_line << start_end_time_output(sea_dir) + DELIMITER
   csv_line
+end
+
+
+# dump the start and end time of the SEA
+def start_end_time_output(sea_dir)
+  tmp_start = "01/01/01_01:00"
+  tmp_end = "01/01/01_01:00"
+  time_stamp = "#{sea_dir}/time_stamps.txt"
+  if File.exist?(time_stamp)
+    File.open(time_stamp,"r").each do |l|
+      if /START/.match(l)
+        tmp_start = l.split()[1].chomp
+      elsif /END/.match(l)
+        tmp_end = l.split()[1].chomp
+      end
+    end
+  end
+  return tmp_start + DELIMITER + tmp_end
 end
 
 # Load Dirs to use to look for SEAs
@@ -160,7 +181,8 @@ def process_seas(seas)
     if sd.bams.size == 1 and sd.stats_files.size.to_s =~ /1|2/
       h_stats = to_hash(sd.stats_files)
       if h_stats.is_a?(String)
-        return s
+				Helpers::log(h_stats)
+				Helpers::log("Skipping #{s}")
       else
         if csv_line = dump_csv_line(sd.dir, sd.bams, h_stats)
           puts csv_line

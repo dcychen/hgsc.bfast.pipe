@@ -53,7 +53,7 @@ class Sequence_event
   end
 
   def fr?
-    if @run_name.match(/sA_\d+_\d$/)
+    if @run_name.match(/s\w_\d+_\d$/)
       return true
     else
       return false
@@ -61,7 +61,7 @@ class Sequence_event
   end
 
   def mp?
-    if @run_name.match(/pA_\d+_\d$/) 
+    if @run_name.match(/p\w_\d+_\d$/) 
       return true
     else
       return false
@@ -113,6 +113,16 @@ class Sequence_event
     return ((/^(\d+_\d+_\d_S[L|P])/).match(@run_name))[1]
   end
 
+  # check if jobs for the sea is in cluster
+  def job_in_cluster?
+    list = `bjobs -w | grep #{@run_name}`
+    if list.empty?
+      return false
+    else
+      return true
+    end
+  end
+
   private
 
 # Method to validate run_name
@@ -129,11 +139,10 @@ class Sequence_event
       valid_prefix = true
     end
 
-    if run_name.match(/pA_\d+_\d$/) ||
-       run_name.match(/sA_\d+_\d$/) ||
-       run_name.match(/sA_\d+_\d_BC\d+$/) ||
-       run_name.match(/pA_\d+_\d_BC\d+$/) ||
-       run_name.match(/sA_\d+_\d_bc\d+$/) 
+    if run_name.match(/p\w_\d+_\d$/) ||
+       run_name.match(/s\w_\d+_\d$/) ||
+       run_name.match(/s\w_\d+_\d_BC\d+$/) ||
+       run_name.match(/s\w_\d+_\d_bc\d+$/) 
       valid_suffix = true
     end
     return valid_prefix && valid_suffix

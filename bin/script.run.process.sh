@@ -5,14 +5,15 @@
 # didn't
 #
 
-mail_to="pellon@bcm.edu deiros@bcm.edu niravs@bcm.edu pc2@bcm.edu"
+mail_to="pellon@bcm.edu pc2@bcm.edu"
+#mail_to="dc12@bcm.edu"
 
 help()
 {
-	echo "$1"
-	echo "Usage:"
-	echo "$0 job_name cmd"
-	exit 1
+  echo "$1"
+  echo "Usage:"
+  echo "$0 job_name cmd"
+  exit 1
 }
 
 send_email()
@@ -45,10 +46,10 @@ mkdir -p $track_dir
 eval "$cmd"
 if [ $? -eq 0 ]
 then
-	touch $track_dir/$job_name.ok
-	exit 0
+  touch $track_dir/$job_name.ok
+  exit 0
 else
-	touch $track_dir/$job_name.error
+  touch $track_dir/$job_name.error
   send_email `pwd` $job_name
-	exit 1
+  exit 1
 fi

@@ -113,14 +113,17 @@ class Solid_transfer
             data[k].each do |p|
               filename = File.basename(p)
               file = dest_path(snfs,p) + "/#{filename}"
-              md5 = grab_md5_from_file(md5_file, filename)
-              if md5 == ""
-                Helpers::log("#{filename} md5sum not found in #{md5_file}." +
-                             " Running check and saving to file.")
-                md5 = `md5sum #{file}`
-                add_line_to_file("#{run_path}/md5sum_check.txt", md5)
-              end
-              inst = ssh_md5sum_file(p)
+              fork {
+                md5 = grab_md5_from_file(md5_file, filename)
+                if md5 == ""
+                  Helpers::log("#{filename} md5sum not found in #{md5_file}." +
+                               " Running check and saving to file.")
+                  md5 = `md5sum #{file}`
+                  add_line_to_file("#{run_path}/md5sum_check.txt", md5)
+                end
+                inst = ssh_md5sum_file(p)
+              }
+              Process.waitall
               if md5.split[0] == inst.split[0]
                 files_checked = files_checked + 1
               else

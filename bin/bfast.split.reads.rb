@@ -23,8 +23,8 @@ input_options:
  qf3: quals_f3
  qr3: quals_r3
 global_options:
- bfast_bin: /stornext/snfs1/next-gen/drio-scratch/bfast_related/bfast/bfast
- samtools_in: /stornext/snfs1/next-gen/software/samtools-0.1.6
+ bfast_bin: /stornext/snfs5/next-gen/software/bfast
+ samtools_in: /stornext/snfs5/next-gen/software/samtools-0.1.6
  space: CS
  fasta_file_name: /genomes/hg18/hg18.fasta
  timing: ON
