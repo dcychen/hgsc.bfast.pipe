@@ -49,7 +49,6 @@ module Helpers
         found << path if File.file?(path)             and
                          !File.symlink?(path)         and
                          path =~ /(.csfasta$|.qual$)/ and
-                         path =~ /reads/              and
                          sea.same_name_as?(path)
       end
     end
