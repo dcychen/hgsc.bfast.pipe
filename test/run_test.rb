@@ -87,6 +87,8 @@ def prepare_test_env(test_type)
   FileUtils.mkdir_p(result_dir)
   FileUtils.mkdir_p("./tmp/snfs1/next-gen/solid/analysis/solid0312")
   FileUtils.mkdir_p("./tmp/snfs1/next-gen/solid/results/solid0312")
+  FileUtils.mkdir_p("./tmp/snfs4/next-gen/solid/analysis/solid0312")
+  FileUtils.mkdir_p("./tmp/snfs4/next-gen/solid/results/solid0312")
   FileUtils.mkdir_p("./tmp/snfs5/next-gen/solid/analysis/solid0312")
   FileUtils.mkdir_p("./tmp/snfs5/next-gen/solid/results/solid0312")
 
@@ -105,6 +107,11 @@ def prepare_test_env(test_type)
   puts analysis_driver_cmd 
   # Execute the command to start analysis_driver
   output = `#{analysis_driver_cmd}`
+
+  if $?.exitstatus != 0
+    puts "Problems running analysis driver, bailing out."
+    exit 1
+  end
 
   # Copy data from result directory to analysis directory. This is 
   # required as creation of soft links to data from the analysis directory
