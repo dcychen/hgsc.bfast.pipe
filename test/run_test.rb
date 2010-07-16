@@ -72,11 +72,12 @@ def prepare_test_env(test_type)
   run_name = generate_run_name(test_type)
   spot_name = run_name.slice(/0312_\d+_1_SP/)
   lib_name = run_name.slice(/ANG_TEST_1_1\wA_\d+_1$/)
+  sn = Helpers::SNFS_NUMBER # snfs number
 
-  analysis_dir = "./tmp/snfs4/next-gen/solid/analysis/solid0312/" +
+  analysis_dir = "./tmp/snfs#{sn}/next-gen/solid/analysis/solid0312/" +
   time.strftime("%Y") + "/" + time.strftime("%m") # + "/" + run_name
 
-  result_dir = "./tmp/snfs4/next-gen/solid/results/solid0312/" + spot_name + 
+  result_dir = "./tmp/snfs#{sn}/next-gen/solid/results/solid0312/" + spot_name + 
                "/" + lib_name + "/results.F1B1/primary/reads" 
 
   sea_dir = analysis_dir + "/" + run_name
