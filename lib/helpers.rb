@@ -57,9 +57,7 @@ module Helpers
 
   # Get a SEA dir
   def self.a_dir_for(sea)
-    SEA_DIR_TEMPLATE
-    .gsub(/SS/, SNFS_NUMBER)
-    .gsub(/II/, sea.instrument) + "/" +
+    SEA_DIR_TEMPLATE.gsub(/SS/, SNFS_NUMBER).gsub(/II/, sea.instrument) + "/" +
     DateTime.now.year.to_s + "/" +
     sprintf("%.2d", DateTime.now.month) + "/" + 
     sea.to_s

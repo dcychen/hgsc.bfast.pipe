@@ -1,0 +1,261 @@
+Name
+  
+  transfer_driver - manages transfers
+  split_transfer - same functionaility and interface as transfer_driver.
+                   When all machines is specified, it only selects the 
+                   machines that are associated with the host (stornext7, 
+                   sug-backupt). These machines are specified in the
+                   etc/split.machine_list.yaml
+
+Dependencies
+
+Synopsis
+
+  transfer_driver.rb [option] ... [option]
+
+Examples
+
+ ping: pings specified servers and lists their statuses
+       $ transfer_driver.rb -a ping -m solid0044
+       $ transfer_driver.rb -a ping -m "solid0044 solid0097"
+       $ transfer_driver.rb -a ping -l
+ 
+ list_se: Lists the sequence events on the specified machines
+       $ transfer_driver.rb -a list_se -m solid0044 [-r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1]
+       $ transfer_driver.rb -a list_se -m "solid0044 solid0097" [-r 0097_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1]
+       $ transfer_driver.rb -a list_se -l
+       $ transfer_driver.rb -a list_se -r 0708_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1 
+  
+ disk_usage: Lists the amount of free space and the percentage of space used on the specified machines
+       $ transfer_driver.rb -a disk_usage -m solid0044 -e name@domain.com
+       $ transfer_driver.rb -a disk_usage -m "solid0044 solid0097" -e "name@domain.com name2@domain.com"
+       $ transfer_driver.rb -a disk_usage -l
+       $ transfer_driver.rb -a disk_usage -e 
+
+se_ready: Checks to see if the sequence has finished transfering
+       $ transfer_driver.rb -a se_ready -r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_
+
+ transfer: transfers all the data files for a given machine and run
+       $ transfer_driver.rb -a transfer -m solid0044 -s 4 -r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1 -e "name@domain.com"
+       $ transfer_driver.rb -a transfer -m solid0044 -s 4 -e "name@domain.com"
+
+ completed_se: Places the slide done flag in the appropriate directory based off the run name
+       $ transfer_driver.rb -a completed_se -r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1
+       $ transfer_driver.rb -a completed_se -r 0044_20100601_2_SL
+
+ stop: Stops all transfers from the specified machines
+       $ transfer_driver.rb -a stop -m solid0044
+       $ transfer_driver.rb -a stop -m "solid0044 solid0097"
+       $ transfer_driver.rb -a stop -l
+       $ transfer_driver.rb -a stop
+
+Description
+
+  Manages the transfers from the solid machines to the
+  stornext servers. The driver provides functionality
+  for listing the sequences on the machines, checking
+  the status of the machines, starting and stopping
+  transfers, and placing the slide done flag within
+  the solid machines.
+
+  -h, --help                             Displays help message
+  -v, --version                          Display the version, then exit
+
+  -m, --machine_name, --machine_names,   list of machine names
+  -l, --all                              loads alls machines
+  -a, --action                           action to perform 
+  -e, --email                            list of emails to be notified
+  -s, --snfs                             the snfs server to transfer to
+
+Data Flow
+
+  Transfer Case -
+    - The user calls the transfer driver from the command line, they 
+      pass in the machine name, snfs destination,
+      and optionally the notification email, and run name
+     
+      $ transfer_driver.rb -a transfer -m solid0044 -s 4 
+	  	  -r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1 
+        -e "name@domain.com"
+   
+    - The driver then parses the arguments and places them in a hash map with 
+      an argument/value pairing.
+      If there are multiple machine names, email addresses, or run names, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the transfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the Transfer action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The action class then forks the process for each machine
+      or name in the parameter lists. 
+
+    - Each of the children processes first create a <machine>_active_transfer.txt
+      file and writes its pid to the file. They
+      then pass the appropriate methods in the Solid_transfer class.
+
+    - Two methods are called from the Solid_transfer class: transfer and 
+      completed_se.
+      - transfer will try to go through all of the files on the instrument 
+         unless a SE name is passed in.
+        - It will transfer the data to the designated location: 
+          /stornext/snfs#/next-gen/solid/results/#{machine}/YYYY/MM/#{SE_rname}
+        - prior to the start of the transfer, it will check if the SE has been 
+          transferred before.  The list of new SE is located here: 
+          ~/.hgsc_solid/#{machine}/#{machine}_new_slides.txt
+        - A time stamp embedded file will be created prior to the start of the 
+          transferring and will be removed after the transferring has finished.
+          ~/.hgsc_solid/#{machine}/#{SE}.lock
+      - completed_se will verify whether the files have been transferred 
+        correctly.
+        - md5sum check is used here for the comparison between the files on the 
+          instruments and the ones on ardmore and the stored in a file:
+          /stornext/snfs#/next-gen/solid/results/#{machine}/YYYY/MM/#{SE_rname}/
+          md5sum_check.txt
+        - when all files have been verified the SE name will be store in a file
+          ~/.hgsc_solid/#{machine}/#{machine}_done_slides.txt
+        - this file will be checked prior to the other steps, if the SE name is
+          already in the file, it will not repeat the steps again.
+
+  Ping Case -
+
+    - The user calls the transfer driver from the command line, they
+      pass in the machine name or run it over all machines.
+
+      $ transfer_driver.rb -a ping -m solid0044
+
+    - The driver then parses the arguments and places them in a hash map with
+      an argument/value pairing.
+      If there are multiple machine names, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the tranfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the Ping action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The class then parses the parameters and passes these to the
+      ping method within the Ping class.
+
+    - The ping class then tries to open a ssh connection to the selected
+      machine. If it is succesful it returns true, other wise it returns
+      false.
+
+    - The ping action class then display an appropriate message depending
+      on the return value of the ping class.
+
+  List_se Case -
+
+    - The user calls the transfer driver from the command line, they
+      pass in the machine name and optionally a list of run names.
+
+      $ transfer_driver.rb -a list_se -m solid0044 
+        [-r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1]
+
+    - The driver then parses the arguments and places them in a hash map with
+      an argument/value pairing.
+      If there are multiple machine names or run names, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the transfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the List_se action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The class then parses the parameters and passes these to the
+      appropriate method within the SE_inst class.
+
+		- If the SE name is not passed in, it will list out all of the SE that is
+			currently on the instrument.  The format of the output is as follows:
+
+      SE_name:[FR|MP|BC|PE]
+			  path_to_csfasta
+        path_to_qual
+			
+			ie. 0526_20100625_2_SP_ANG_B_WMH_A10939_2_1sA_01003311363_1:FR
+					  /data/results/solid0526/0526_20100625_2_SP/ANG_B_WMH_A10939_2_1sA_0
+					  1003311363_1/results.F1B1/primary.20100701185846702/reads/0526_2010
+            0625_2_SP_ANG_B_WMH_A10939_2_1sA_01003311363_1_F3.csfasta
+            /data/results/solid0526/0526_20100625_2_SP/ANG_B_WMH_A10939_2_1sA_0
+            1003311363_1/results.F1B1/primary.20100701185846702/reads/0526_2010
+            0625_2_SP_ANG_B_WMH_A10939_2_1sA_01003311363_1_F3_QV.qual
+
+  Disk_usage Case -
+
+    - The user calls the transfer driver from the command line, they
+      pass in the machine name and optionally an email address.
+
+      $ transfer_driver.rb -a disk_usage -m "solid0044 solid0097" 
+				-e "name@domain.com name2@domain.com" 
+
+    - The driver then parses the arguments and places them in a hash map with
+      an argument/value pairing.
+      If there are multiple machine names or email addresses, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the transfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the Disk_usage action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The class then parses the parameters and passes these to the
+      appropriate method within the SE_inst class.
+
+  Completed_se Case - 
+
+    - The user calls the transfer driver from the command line, they
+      pass in the run name.
+
+      $ transfer_driver.rb -a completed_se 
+        -r 0044_20100601_2_SL_ANG_OIVBL_189_01_02_1_1sA_01003311222_1
+
+    - The driver then parses the arguments and places them in a hash map with
+      an argument/value pairing.
+      If there are multiple run names, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the transfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the Completed_se action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The class then parses the parameters and passes these to the
+      appropriate method within the Solid Transfer class.
+
+  Stop Case -
+
+    - The user calls the transfer driver from the command line, they
+      pass in the machine name or run it over all machines. 
+
+      $ transfer_driver.rb -a stop -m solid0044
+
+    - The driver then parses the arguments and places them in a hash map with
+      an argument/value pairing.
+      If there are multiple machine names, the
+      driver will split these and place them in a list.
+
+    - The driver then passes these parameters to the T_action class. The
+      T_action class loads in the transfer action classes and selects the
+      appropriate one based off the action (-a) argument.
+
+    - In this case the Stop action class is selected, the T_action
+      class then passes the parameters to the run method in the action
+      class. The class then parses the machine name and determines which
+      host it is associated with (stornext7, sug-backup). The action then
+      creates a ssh connection to the appropriate host. When connected, it
+      looks up the process id in the <machine>_active_transfer.txt file
+      and kills it. The action finishes by deleting this file and removing
+      all locks.
+
+    - After stoping the process on the main host, it then calls the stop
+      function within the Solid Transfer class. This function ssh's into
+      the solid machines and kills the rsync process on that side, thus
+      completely halting all transfers associated with the passed in
+      machine.
+
