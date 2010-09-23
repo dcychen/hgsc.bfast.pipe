@@ -48,6 +48,8 @@ class Solid_transfer
                    "#{@machine}_new_slides.txt"
     @done_slides = "#{ENV['HOME']}/.hgsc_solid/#{@machine}/" +
                    "#{@machine}_done_slides.txt"
+    @backup_file = "#{ENV['HOME']}/.hgsc_solid/backup/" +
+                   "solid_raw_backup.txt"
   end
    
   def transfer(snfs, rname = "all", send_email=1)
@@ -113,33 +115,36 @@ class Solid_transfer
             data[k].each do |p|
               filename = File.basename(p)
               file = dest_path(snfs,p) + "/#{filename}"
-              fork {
-                md5 = grab_md5_from_file(md5_file, filename)
-                if md5 == ""
-                  Helpers::log("#{filename} md5sum not found in #{md5_file}." +
-                               " Running check and saving to file.")
-                  md5 = `md5sum #{file}`
-                  add_line_to_file("#{run_path}/md5sum_check.txt", md5)
-                end
-                inst = ssh_md5sum_file(p)
-              }
-              Process.waitall
+              md5 = grab_md5_from_file(md5_file, filename)
+              if md5 == ""
+                Helpers::log("#{filename} md5sum not found in #{md5_file}." +
+                             " Running check and saving to file.")
+                md5 = `md5sum #{file}`
+                add_line_to_file("#{run_path}/md5sum_check.txt", md5)
+              end
+              Helpers::log("checking #{p} md5sum on instrument")
+              inst = ssh_md5sum_file(p)
               if md5.split[0] == inst.split[0]
                 files_checked = files_checked + 1
-              else
-                rm_md5_from_file(md5_file, filename)
-              end
-              if /csfasta/.match(file)
-                valid_csfasta = check_csfasta(file)
-                if valid_csfasta.size != 0
-                  fasta_valid = FALSE
-                  Helpers::log("csfasta not valid!")
-                  if email?
-                    msg = "#{file} did not pass the csfasta validator."
-                    Emailer::send_email(EMAIL_FROM, @email_to,
-                                        "CSFASTA not valid!", msg)
+                # verify the csfasta when the md5 checks out
+                if /csfasta/.match(file)
+                  valid_csfasta = check_csfasta(file)
+                  if valid_csfasta.size != 0
+                    fasta_valid = FALSE
+                    Helpers::log("csfasta not valid!")
+                    if email?
+                      msg = "#{file} did not pass the csfasta validator."
+                      Emailer::send_email(EMAIL_FROM, @email_to,
+                                          "CSFASTA not valid!", msg)
+                    end
                   end
                 end
+              else
+                # remove the md5 line from file
+                rm_md5_from_file(md5_file, filename)
+                Helpers::log("md5s did not match. removing file: #{file}")
+                # remove the file from ardmore
+                FileUtils.rm file 
               end
               if !/csfasta/.match(p) && !/qual/.match(p)
                 rawdata = FALSE
@@ -150,6 +155,9 @@ class Solid_transfer
                 Helpers::log("#{k} has been transferred. Emailing and adding run " +
                              "name to slide completed file.")
                 add_line_to_file(@done_slides, k)
+                #send to backup
+#                 backup_data(@backup_file, dest_path(snfs,k))
+#                backup_data(@backup_file, run_path)
                 if email? && send_email != 0
                   msg = "#{@machine}: #{k} has been fully transferred."
                   Emailer::send_email(EMAIL_FROM, @email_to, msg, msg)
@@ -191,6 +199,29 @@ class Solid_transfer
   end
 
   private
+
+  # send the transferred raw data path to backup file
+  def backup_data(file, path)
+    dir = File.dirname(path)
+    if !File.directory?(dir)
+      FileUtils.mkdir_p(dir)
+    end
+    lock = "#{file}.lock"
+    temp = "#{file}.tmp"
+    if File.exist?(lock)
+      add_line_to_file(temp, path)
+    else
+      create_lock_file(lock)
+      if File.exist?(temp)
+        File.open(temp).readline do |r|
+          add_line_to_file(file, r)
+        end
+        FileUtils.rm temp        
+      end
+      add_line_to_file(file, path)
+      remove_lock_file(lock)
+    end
+  end
 
   # checks in file to see if rname exists  
   def check_transferred?(rname, done_slides)
@@ -351,10 +382,17 @@ class Solid_transfer
     if !File.directory?(dir)
       FileUtils.mkdir_p(dir)
     end
-    File.open("#{dir}/#{run_name}.lock",
-              "w") do |f|
+    create_lock_file("#{dir}/#{run_name}.lock")
+  end
+
+  def create_lock_file(file)
+    File.open(file, "w") do |f|
       f.puts(Time.now)
     end
+  end
+
+  def remove_lock_file(file)
+    FileUtils.rm(file)
   end
 
   # check if the lock file is there
@@ -366,7 +404,7 @@ class Solid_transfer
   # removes the lock file
   def remove_lock(run_name)
     Helpers::log("Removing lock for #{run_name}")
-    FileUtils.rm("#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{run_name}.lock")
+    remove_lock_file("#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{run_name}.lock")
   end
 
   # parse out and returns the pid

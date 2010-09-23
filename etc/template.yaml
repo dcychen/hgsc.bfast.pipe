@@ -28,13 +28,13 @@ global_options:
  compress_splits: none
 match_options:
  threads: 8
- moab_resources: "nodes=1,pmem=28000mb"
+ moab_resources: "nodes=1:ppn=8,mem=28000mb"
 bwaaln_options:
  threads: 8
  prefix: /stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/bwaaln/hsap_36.1_hg18.fa
 local_options:
  threads: 8
- moab_resources: "nodes=1,pmem=28000mb"
+ moab_resources: "nodes=1:ppn=8,mem=28000mb"
 post_options:
  algorithm: 4
  moab_resources: "pmem=4000mb"
@@ -56,7 +56,7 @@ dups_options:
  moab_resources: "pmem=8000mb"
  java_vm_mem: "8g"
 final_options:
- moab_resources: "pmem=4000mb"
+ moab_resources: "pmem=8000mb"
 header_options:
  regen_jar: java/bam.header.creation/bam.header.creation.jar
  sq_type: hsap36.1
