@@ -112,8 +112,10 @@ class Solid_transfer
             files_checked = 0
             fasta_valid = TRUE
             rawdata = TRUE
+            d_path = ""
             data[k].each do |p|
               filename = File.basename(p)
+              d_path = dest_path(snfs,p)
               file = dest_path(snfs,p) + "/#{filename}"
               md5 = grab_md5_from_file(md5_file, filename)
               if md5 == ""
@@ -156,8 +158,7 @@ class Solid_transfer
                              "name to slide completed file.")
                 add_line_to_file(@done_slides, k)
                 #send to backup
-#                 backup_data(@backup_file, dest_path(snfs,k))
-#                backup_data(@backup_file, run_path)
+                backup_data(@backup_file, d_path)
                 if email? && send_email != 0
                   msg = "#{@machine}: #{k} has been fully transferred."
                   Emailer::send_email(EMAIL_FROM, @email_to, msg, msg)

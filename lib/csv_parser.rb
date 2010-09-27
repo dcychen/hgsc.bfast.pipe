@@ -59,7 +59,6 @@ class Csv_parser
         note = "* a negative throughput indicates removal or restart of the " +
                "SEAs. \n\n"
       end
-
       week_failed_sea = []
       failed_sea.each do |f|
         if lingering_sea(f)
@@ -69,6 +68,7 @@ class Csv_parser
 
       failed = "#{week_failed_sea.size} lingering SEAs:\n" +
                week_failed_sea.join("\n").to_s
+
       msg = "Total:\nSEAs: #{yday.new_sea}\n" +
       "Throughputs: #{yday.new_tp} (" +
       "#{Statistics::round_to_two_dig(Statistics::to_tb(yday.new_tp.to_f))}" +
@@ -166,6 +166,13 @@ class Csv_parser
 
   def compare_today_with_day(csv_list, day)
     if csv_list.key?(day) && csv_list.key?(@today)
+#puts csv_list[@today]
+#puts csv_list[day]
+#puts csv_list.class
+#puts @today
+#puts day
+#exit(1)
+
       diff = diff_in_day(csv_list[@today], csv_list[day])
       return diff
     else
@@ -192,11 +199,25 @@ class Csv_parser
     find_next_available_date(csv_list, last_sun)
   end
 
+  #returns the time when the csv is crated
+  def get_csv_time(csv_name)
+    temp = csv_name.split(".")
+    return temp[temp.size - 2]
+  end
+
   #goes through the list and constructs hash of the stats
   def parse_csv_list(csvs)
     temp = {}
     csvs.each do |c|
-      temp[grab_date(c)] = [sea_amount(c), csv_total_throughputs(c), c]
+      date = grab_date(c)
+      time = get_csv_time(c)
+      if temp.include?(date)
+        if temp[date][3] > time
+          temp[date] = [sea_amount(c), csv_total_throughputs(c), c, get_csv_time(c)]
+        end
+      else
+        temp[date] = [sea_amount(c), csv_total_throughputs(c), c, get_csv_time(c)]
+      end        
     end
     temp
   end
