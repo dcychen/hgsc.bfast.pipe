@@ -10,12 +10,12 @@ module Helpers
 
   # TO DO: This has to by dynamic.
   # 
-  SNFS             = %w(1 4 5).freeze
+  SNFS             = %w(0 1 4 5).freeze
   L1_DIR           = `id -u -n`.chomp == "p-solid" ? "/stornext" :
                       curr_dir + "/tmp"
   SEA_DIR_TEMPLATE = "#{L1_DIR}/snfsSS/next-gen/solid/analysis/solidII"
   RAW_DIR_TEMPLATE = "#{L1_DIR}/snfsSS/next-gen/solid/results/solidII"
-  SNFS_NUMBER      = "5"
+  SNFS_NUMBER      = "0"
   RUN_A_PATH       = `id -u -n`.chomp == "p-solid" ?
                       File.dirname($0) + "/../helpers/run_analysis.sh" :
                       curr_dir.gsub!(/test$/, "helpers/run_analysis.sh")

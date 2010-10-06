@@ -37,7 +37,11 @@ def sea_dir?(d)
   (
   d =~ %r{/\w+/\w+/[\w-]+/\w+/analysis/\w+/\d+/\d+/\w+} and
   d.split("/").size == 10
-  ) ? true : false
+  ) or 
+  (
+  d =~ %r{/\w+/\w+/[\w-]+/\w+/analysis\/special/\w+/\d+/\d+/\w+} and
+  d.split("/").size == 11
+  )? true : false
 end
 
 # Find requires a "/" in order to traverse a dir. Weird
