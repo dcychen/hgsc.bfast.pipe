@@ -24,4 +24,6 @@ rm -f ./output/*merged.bam ./output/*sorted.bam
 echo "rm -rf reads ./output/split*"
 rm -rf reads ./output/split*
 echo "rm -f ./moab_logs/*job2log*"
-rm -f ./moab_logs/*job2log*
+rm -f ./moab_logs/*job2log  ./moab_logs/*/*job2log*
+echo "rm -f split_jobs"
+rm -rf split_jobs

@@ -4,9 +4,10 @@
 
 # Deals with the creation and deps of LSF jobs
 class MoabDealer
-  def initialize(seed, queue, wrap_cmd_scpt, t_dir, n_splits=1, output_file=nil)
+  def initialize(seed, queue, wrap_cmd_scpt, t_dir, n_splits=1, output_file="cluster_JOBS.sh")
     @queue = queue
-    @output_file ||= "cluster_JOBS.sh"
+#    @output_file ||= "cluster_JOBS.sh"
+    @output_file = output_file
     @contents = [] # contents of the job_list script
     @contents << "#!/bin/bash\n\n"
     @n_jobs = 1
@@ -21,10 +22,47 @@ class MoabDealer
     (1..n_splits).each {|s| FileUtils.mkdir_p "./#{@log_dir}/#{s}" }
   end
 
+  def add_job_to_file(job_root,cmd, split_n=1)
+    split_dir = "split_jobs"
+    if !File.directory?(split_dir)
+      Dir.mkdir(split_dir)
+    end
+
+    r_split  = split_n == "" ? "" : "_split"
+    file = split_dir + "/" + @seed + "_" + job_root + r_split + split_n.to_s + ".sh"
+
+    File.open(file, "a") do |d|
+      d.puts(cmd)
+    end 
+  end
+
+  def add_job_from_file(job_root, split_n=1, resources=nil, deps=nil)
+    r_split  = split_n == "" ? "" : "_split"
+    job_name = @seed + "_" + job_root + r_split + split_n.to_s + "_" +
+               random_string
+    file = "./split_jobs/" +@seed + "_" + job_root + r_split + split_n.to_s + ".sh"
+    wait_for = deps.nil? ? "" : (find_deps deps)
+    
+    job_cmd = "\"sh #{file}\""
+    puts "Adding #{job_name}"
+    @contents << "echo 'Submitting: #{job_name}'"
+    @contents << "echo " + job_cmd + " | \\"
+    @contents << "msub -o #{@log_dir}/#{split_n}/#{job_name}.out \\"
+    @contents << "-e #{@log_dir}/#{split_n}/#{job_name}.err \\"
+    @contents << "-N #{job_name} \\"
+    @contents << "-q #{@queue} #{wait_for} \\"
+    @contents << "-l '#{resources}' \\" if resources
+    @contents << "-V -d `pwd`"
+    @contents << ""
+    puts_job_in_log(job_name, job_cmd, "#{@log_dir}/#{split_n}")
+    @n_jobs += 2
+    job_name
+  end
+
   # Add a regular job
   def add_job(job_root, cmd, split_n=1, resources=nil, deps=nil)
-    r_split  = split_n == "" ? "" : ".split"
-    job_name = @seed + "." + job_root + r_split + split_n.to_s + "." + 
+    r_split  = split_n == "" ? "" : "_split"
+    job_name = @seed + "_" + job_root + r_split + split_n.to_s + "_" + 
                random_string
                # + "." + @n_jobs.to_s + rand(100).to_s
     wait_for = deps.nil? ? "" : (find_deps deps)
