@@ -4,7 +4,8 @@ class SEA_create
 
   def run(params)
     perform_create(params[:sea], params[:c_design], params[:force_mp], 
-                   params[:force_pe], params[:pival], params[:no_trans_check])
+                   params[:force_pe], params[:pival], params[:no_trans_check],
+                   params[:special_run])
   end
 
   private
@@ -17,20 +18,21 @@ class SEA_create
     Helpers::log "Logging raw_data in: " + tmp_file
   end
 
-  def check_for_sea_dirs(sea)
+  def check_for_sea_dirs(sea, special_run)
     Helpers::log "Checking if SEA is already there ..."
-    Helpers::dir_exists?(sea)
+    Helpers::dir_exists?(sea, special_run)
   end
 
   def print_seas_found(sds)
     sds.each_with_index {|s,i| Helpers::log("#{i}. #{s}", 1) }
   end
 
-  def perform_create(sea, c_design, force_mp, force_pe, pival, no_trans_check)
+  def perform_create(sea, c_design, force_mp, force_pe, pival, no_trans_check,
+                     special_run)
     # A. check /stornext/snfs(1/4)/next-gen/solid/analysis/solid0312 to see 
     #    if the SEA directory exists. 
     #    Bail out: printing the path to the SEA dir found.
-    sea_dirs_found = check_for_sea_dirs(sea)
+    sea_dirs_found = check_for_sea_dirs(sea, special_run)
     
     # If found anything .. complain
     # If all cool (nothing found), get the full path to the SEA dir we'll use
@@ -41,7 +43,7 @@ class SEA_create
     elsif sea_dirs_found.size == 1
       Helpers::log("Found the SEA directory already :( #{sea_dirs_found[0]}", 1)
     else
-      sea_dir = Helpers::a_dir_for(sea)
+      sea_dir = Helpers::a_dir_for(sea, special_run)
       Helpers::log("Good, not found, SEA dir will be: #{sea_dir}")
     end
    
@@ -49,11 +51,11 @@ class SEA_create
     #    Bail out: Couldn't find raw data files
     #    Bail out: >= 4 raw files ... MP (.csfasta + qual) x 2
     #    Bail out: >= 2 raw files ... FR (.csfasta + .qual)
-    raw_data = Helpers::find_raw_data(sea)
+    raw_data = Helpers::find_raw_data(sea, special_run)
     Helpers::log("# of raw data files found: (#{raw_data.size})")
     if raw_data.size == 0
       Helpers::log("There is no raw data. Bailing out", 1)
-    elsif !Helpers::transfered?(sea) && !no_trans_check
+    elsif !Helpers::transferred?(sea, no_trans_check) #&& !no_trans_check
       Helpers::log("The raw data have not been fully transferred", 1)
     elsif sea.mp? and raw_data.size != 4 
       dump_raw_data_found(raw_data)
@@ -99,10 +101,10 @@ class SEA_create
     Helpers::link_raw_data(sea_dir + "/input", raw_data)
 
     # E. Dump the config
-    Helpers::dump_config(sea, bf_config)
+    Helpers::dump_config(sea, bf_config, special_run)
 
     # F. Create go.sh on dir
-    puts Helpers::create_starting_script(sea)
+    puts Helpers::create_starting_script(sea, special_run)
     Helpers::log "Done."
   end
 end

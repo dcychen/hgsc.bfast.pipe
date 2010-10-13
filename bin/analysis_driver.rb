@@ -57,6 +57,7 @@ class App
       opts.on('-m', '--force_mp')       {    @options.force_mp = true }
       opts.on('-e', '--force_pe')       {    @options.force_pe = true }
       opts.on('-n', '--no_trans_check') {    @options.no_trans_check = true }
+      opts.on('-s', '--special_run')    {    @options.special_run = true }
       opts.on('-p', '--pival p')        {|p| @options.pival    = p.upcase }
             
       log "Processing arguments"
@@ -93,6 +94,7 @@ class App
       @force_mp       = @options.force_mp || false
       @force_pe       = @options.force_pe || false
       @no_trans_check = @options.no_trans_check || false
+      @special_run    = @options.special_run || false
       @pival          = @options.pival || "STRICT"
       log "picard validation mode: #{@pival}"
       log "Forcing MP mode detected" if @force_mp
@@ -137,6 +139,7 @@ class App
         :force_mp       => @force_mp,
         :force_pe       => @force_pe,
         :no_trans_check => @no_trans_check,
+        :special_run    => @special_run,
         :pival          => @pival  ,
       }
     end
@@ -168,6 +171,7 @@ Options:
  -m, --force_mp       Force MP despite the SE is a PE
  -e, --force_pe       Force PE despite the SE is a FR
  -n, --no_trans_check Force analysis without checking raw data transfer
+ -s, --special_run    Look into the special directories
  -c, --c_design       capture_design
  -q, --queue          cluster queue     [normal]
  -p, --pival          Picard validation [STRINGENT] (STRICT|LENIENT|SILENT)

@@ -176,7 +176,7 @@ class BfastCmd
     end
   
     cmd = "cat #{cat_files} #{extra_fn} | "
-    cmd << 'mail -s \"[OK] BFast analysis completed: ' + root_name + '\"'
+    cmd << 'mail -s "[OK] BFast analysis completed: ' + root_name + '"'
     cmd << " #{email_to}"
   end
 
