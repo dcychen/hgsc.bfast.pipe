@@ -21,6 +21,22 @@ module TimeHelpers
   def self.time_lapsed(start, finish)
     return finish - start
   end
+ 
+  # returns: last month in the following format yyyy-mm 
+  def self.get_pre_mon
+    mon = Date.today.month
+    year  = Date.today.year
+    if mon == 1
+      year = year - 1
+      mon = 12
+    else
+      mon = mon - 1
+      if mon < 10
+        mon = "0" + mon.to_s
+      end
+    end
+    return year.to_s + "-" +  mon.to_s
+  end
 
   # @params: start: String , finish: String
   #          format can be as following:

@@ -32,6 +32,7 @@ require 'fileutils'
 require 'emailer'
 require 'net/ssh'
 require 'sequence_event'
+require 'backup'
 
 class Solid_transfer
   EMAIL_FROM = "p-solid@bcm.edu"
@@ -158,7 +159,7 @@ class Solid_transfer
                              "name to slide completed file.")
                 add_line_to_file(@done_slides, k)
                 #send to backup
-                backup_data(@backup_file, d_path)
+                Backup::backup_data(@backup_file, d_path)
                 if email? && send_email != 0
                   msg = "#{@machine}: #{k} has been fully transferred."
                   Emailer::send_email(EMAIL_FROM, @email_to, msg, msg)
@@ -200,30 +201,6 @@ class Solid_transfer
   end
 
   private
-
-  # send the transferred raw data path to backup file
-  def backup_data(file, path)
-    dir = File.dirname(path)
-    if !File.directory?(dir)
-      FileUtils.mkdir_p(dir)
-    end
-    lock = "#{file}.lock"
-    temp = "#{file}.tmp"
-    if File.exist?(lock)
-      add_line_to_file(temp, path)
-    else
-      create_lock_file(lock)
-      if File.exist?(temp)
-        File.open(temp).readline do |r|
-          add_line_to_file(file, r)
-        end
-        FileUtils.rm temp        
-      end
-      add_line_to_file(file, path)
-      remove_lock_file(lock)
-    end
-  end
-
   # checks in file to see if rname exists  
   def check_transferred?(rname, done_slides)
     Helpers::log("Checking if #{rname} has been transferred")
@@ -383,17 +360,7 @@ class Solid_transfer
     if !File.directory?(dir)
       FileUtils.mkdir_p(dir)
     end
-    create_lock_file("#{dir}/#{run_name}.lock")
-  end
-
-  def create_lock_file(file)
-    File.open(file, "w") do |f|
-      f.puts(Time.now)
-    end
-  end
-
-  def remove_lock_file(file)
-    FileUtils.rm(file)
+    Lock::create_lock_file("#{dir}/#{run_name}.lock")
   end
 
   # check if the lock file is there
@@ -405,7 +372,7 @@ class Solid_transfer
   # removes the lock file
   def remove_lock(run_name)
     Helpers::log("Removing lock for #{run_name}")
-    remove_lock_file("#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{run_name}.lock")
+    Lock::remove_lock_file("#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{run_name}.lock")
   end
 
   # parse out and returns the pid
