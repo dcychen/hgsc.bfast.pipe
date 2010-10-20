@@ -70,7 +70,7 @@ class Sequence_event
 
   def pe?(raw_data)
     if raw_data.size == 4 and                                               # 4 raw files
-       raw_data.inject(0) {|sum, i| i =~ /F5-P2/ ? sum + 1 : sum } == 2 and # 2 raw files with the regexp on it
+       raw_data.inject(0) {|sum, i| i =~ /F5-/ ? sum + 1 : sum } == 2 and # 2 raw files with the regexp on it
        raw_data.inject(0) {|sum, i| i =~ /_F3/ ? sum + 1 : sum } == 2       # 2 raw files with the regexp on it
       true
     else
@@ -95,7 +95,8 @@ class Sequence_event
     # A csfasta file will have suffix F{R}3 OR _F5-P2_QV (new v4 format for PE data)
     # Following two statements remove these suffixes
     r_name.slice!(/_QV/)
-    r_name.slice!(/-P2$/)
+    r_name.slice!(/-P2/)
+    r_name.slice!(/-BC/)
     r_name.slice!(/_[FR][35]/)
 
     (valid?(r_name) and @run_name == r_name) ? true : false
