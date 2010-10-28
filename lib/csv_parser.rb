@@ -5,48 +5,52 @@ require 'sequence_event'
 require 'statistics'
 require 'emailer'
 require 'time_helpers'
-#require 'helpers'
-#
+
 class Csv_parser
   def initialize(path, email_to)
-    @theCSV = path+"csv.dump.latest.csv"
-    if File.exists?(@theCSV)
-      #{EndTime:[<#lines || amount>, <throughput total>, <filename>, <time>]}
-      @all_csvs = parse_csv_list(find_csv(path))
-      @email_to = email_to
-      @today = TimeHelpers::TODAY
-    else
-	puts "The latest dump could not be found in specified path"
-	exit
-    end
+    	@thePath = path
+    	if File.exists?(@theCSV)
+      		#{EndTime:[<#lines || amount>, <throughput total>, <filename>, <time>]}
+      		@all_csvs = parse_csv_list(find_csv(path))
+      		@email_to = email_to
+      		@today = TimeHelpers::TODAY
+    	else
+		puts "The latest dump could not be found in specified path"
+		exit
+    	end
   end
 
   def run
-    email_from = "p-solid@bcm.edu"
-    error_email_to = "english@bcm.edu" #Temporary Disabling "dc12@bcm.edu"
- 	#Day csv name format 
+    	email_from = "p-solid@bcm.edu"
+    	error_email_to = "english@bcm.edu" #Temporary Disabling "dc12@bcm.edu"
+ 	#Day name format 
 	#	csv.dump.YYYY-MM-DD.HH:MM:SS.csv
     
     
-    today =  DateTime::parse((Time.now).strftime("%Y-%m-%d"))
-    yesterday =  DateTime::parse((Time.now - TimeHelpers::SECS_IN_DAY).strftime("%Y-%m-%d") )
+    	today =  DateTime::parse((Time.now).strftime("%Y-%m-%d"))
+    	yesterday =  DateTime::parse((Time.now - TimeHelpers::SECS_IN_DAY).strftime("%Y-%m-%d") )
     
-    #Work around so that on sundays, it looks for last sunday 
-    #This should make a sunday's report be a full week report
-    sunday = DateTime::parse(TimeHelpers::last_sun_date)
+    	#Work around so that on sundays, it looks for last sunday 
+    	#This should make a sunday's report be a full week report
+    	sunday = DateTime::parse(TimeHelpers::last_sun_date)
 	
 	#[<#lines || amount>, <throughput total> ] #
 	yday_total = [0, 0]
 	week_total = [0, 0]
 	all_total = [0, 0]
+	#For tracking what's been removed (next step)
+	latest_seas = {} # Name:endDate
 	
 	#Add each stat to whichever day's totals it contributes to
-	fh = File.new(@theCSV, 'r')
+	fh = File.open(@thePath+"csv.dump.latest.csv", 'r')
 	line = fh.gets#Header
 	while (line = fh.gets)
 		data = line.split(',')
+
+		latest_seas[data[0]] = data[2]
 		endTime = Date::strptime(data[2].split('_')[0],"%m/%d/%y")
 		throughput = sea_throughputs(line)
+		
 		if today >= endTime and endTime >= yesterday
 			yday_total[0] += 1
 			yday_total[1] += throughput
@@ -56,13 +60,63 @@ class Csv_parser
 			week_total[0] += 1
 			week_total[1] += throughput
 		end
-		
+		 
 		all_total[0] += 1
 		all_total[1] += throughput
 		
     	end
    	
-   	week_failed_sea = []
+	totals_msg = "Total:\nSEAs: #{all_total[0]}\n" +
+      		"Throughputs: #{all_total[1]} (#{Statistics::round_to_two_dig(Statistics::to_tb(all_total[1].to_f))}Tb)\n" +
+      		"\n"+
+      		"SEAs generated yesterday (#{yesterday.strftime("%Y-%m-%d")}):\n"+
+      		"New SEAs: #{yday_total[0]}\n" +
+      		"New throughputs: #{yday_total[1]} (#{Statistics::round_to_two_dig(Statistics::to_gb(yday_total[1].to_f))}Gb)\n" +
+      		"\n" +
+      		"From #{sunday.strftime("%Y-%m-%d")} to #{today.strftime("%Y-%m-%d")}:\n" +
+      		"Generated SEAs: #{week_total[0]}\n" +
+      		"Generated throughputs: #{week_total[1]} " +
+      		"(#{Statistics::round_to_two_dig(Statistics::to_gb(week_total[1].to_f))}Gb)"
+
+	#Calculating the removed information
+	removed = [0, 0]
+	best_date = today
+	yday_path = @thePath + yesterday.strftine("%Y/%m/%d/")
+	
+	#Find yesterday's file
+	Find.find(yday_path) do |f|
+		if File.file?(f) and /csv$/.match(f)
+			f_date = DateTime::strptime(s[9,19], "%Y-%m-%d.%H:%M:%S") # parse out date file date
+			if f_date < best_date #Get the earliest file
+				yday_csv = f
+				best_date = f_date
+			end
+		end
+	end
+	
+	yday_csv = yday_path + yday_csv
+	
+	#Parse Yesterday's File
+	fh = File.open(yday_csv, 'r')
+	line = fh.gets #header
+	while (line = fh.gets)
+		data = line.split(',')
+		
+		todayData = latest[seas[data[0]] #this sea's information from today 
+		if todayData != nil and todayData != data[2] #an updated sea
+			if latest_seas[data[0]] != data[2]:
+				removed[0] += 1
+				removed[1] += sea_throughputs(line)
+   		elsif todayData == nil #a removed sea
+			removed[0] += 1
+			removed[1] += sea_throughputs(line)
+		end
+	end
+
+	removed_msg = "Removed SEAs: #{removed[0]} (#Statistics::round_to_two_dig(Statistics::to_gb(removed[1].to_f))}Gb)"
+
+	#Calculating the failed seas	
+	week_failed_sea = []
    	failed_sea.each do |f|
    		if lingering_sea(f)
    			week_failed_sea << f
@@ -70,22 +124,10 @@ class Csv_parser
    	end
    	
    	failed = "#{week_failed_sea.size} lingering SEAs:\n" + week_failed_sea.join("\n").to_s
-   			
-    msg = "Total:\nSEAs: #{all_total[0]}\n" +
-      "Throughputs: #{all_total[1]} (#{Statistics::round_to_two_dig(Statistics::to_tb(all_total[1].to_f))}Tb)\n" +
-      "\n"+
-      "SEAs generated yesterday (#{yesterday.strftime("%Y-%m-%d")}):\n"+
-      "New SEAs: #{yday_total[0]}\n" +
-      "New throughputs: #{yday_total[1]} (#{Statistics::round_to_two_dig(Statistics::to_gb(yday_total[1].to_f))}Gb)\n" +
-      "\n" + 	
-      "From #{sunday.strftime("%Y-%m-%d")} to #{today.strftime("%Y-%m-%d")}:\n" +
-      "Generated SEAs: #{week_total[0]}\n" +
-      "Generated throughputs: #{week_total[1]} " +
-      "(#{Statistics::round_to_two_dig(Statistics::to_gb(week_total[1].to_f))}Gb)" +
-      "\n\n" + failed
+	msg = totals_msg + "\n\n" + removed_msg + "\n\n" + failed
       
       
-    Emailer::send_email(email_from, @email_to, "SEA updates", msg)
+    	Emailer::send_email(email_from, @email_to, "SEA updates", msg)
 
   end
 
