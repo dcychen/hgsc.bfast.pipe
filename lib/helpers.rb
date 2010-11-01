@@ -137,11 +137,11 @@ module Helpers
     machine = "solid#{sea.to_s.slice(0,4)}"
     done_slides = "#{ENV['HOME']}/.hgsc_solid/#{machine}/" +
                   "#{machine}_done_slides.txt"
-    if File.exist?(done_slides)
+    if no_trans_check
+      return true
+    elsif File.exist?(done_slides)
       known = File.open(done_slides).readlines.map!{ |e| e.chomp }
       return known.include?(sea.to_s)
-    elsif no_trans_check
-      return true
     else
       Helpers::log "#{done_slides} cannot be found", 1
     end
