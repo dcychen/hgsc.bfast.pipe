@@ -8,7 +8,7 @@ require 'time_helpers'
 
 class Csv_parser
   def initialize(path, email_to)
-    	@thePath = path
+    	@thePath = path+'/'
     	if File.exists?(@thePath)
       		#{EndTime:[<#lines || amount>, <throughput total>, <filename>, <time>]}
       		@all_csvs = parse_csv_list(find_csv(path))
@@ -22,7 +22,7 @@ class Csv_parser
 
   def run
     	email_from = "p-solid@bcm.edu"
-    	error_email_to = "english@bcm.edu" #Temporary Disabling "dc12@bcm.edu"
+    	error_email_to = "dc12@bcm.edu"
  	#Day name format 
 	#	csv.dump.YYYY-MM-DD.HH:MM:SS.csv
     
@@ -210,23 +210,6 @@ class Csv_parser
     csv.split(".")[2]
   end
 
-  def compare_today_with_day(csv_list, day)
-    if csv_list.key?(day) && csv_list.key?(@today)
-#puts csv_list[@today]
-#puts csv_list[day]
-#puts csv_list.class
-#puts @today
-#puts day
-#exit(1)
-
-      diff = diff_in_day(csv_list[@today], csv_list[day])
-      return diff
-    else
-      puts "required csv(s) are not present"
-      exit(1)
-    end
-  end
-
   def find_next_available_date(csv_list, date_start)
     if !csv_list.key?(date_start)
       entry_start_date = TimeHelpers::return_date_obj(date_start).next
@@ -267,51 +250,6 @@ class Csv_parser
         temp[date] = [sea_amount(c), csv_total_throughputs(c), c, get_csv_time(c)]
       end        
     end
-    temp
-  end
-
-  #ouputs the contents of the parsed csv_list
-  def check_parsed_list(parsed_list)
-    parsed_list.sort.each do |k,v|
-      string = ""
-      v.each do |val|
-        string = string + " " + val.to_s
-      end
-      puts "#{k}: #{string}"
-    end
-  end
-
-  #outputs the parsed list to a csv file
-  def to_csv(data, file)
-    f = File.open(file,"w")
-    data.each do |k,v|
-      temp = ""
-      v.each { |val| temp = temp +",#{val}"}
-      f.puts "#{k},#{temp}"
-    end
-    f.close
-  end
-
-  private
-
-  # calculates the throughput since last Sunday, or the one closeest to last Sunday
-  def accumulate_tp(csv_list, old_date, new_date)
-    diff = diff_in_day(csv_list[new_date], csv_list[old_date])
-    temp = OpenStruct.new
-    temp.date_pre = old_date
-    temp.date_now = new_date
-    temp.sea = diff.diff_sea
-    temp.tp = diff.diff_tp
-    temp
-  end
-
-  #calculates the differences in sea and throughputs with the given two days
-  def diff_in_day(new, old)
-    temp = OpenStruct.new
-    temp.new_sea  = new[0]
-    temp.new_tp   = new[1]
-    temp.diff_sea = new[0] - old[0]
-    temp.diff_tp  = new[1] - old[1]
     temp
   end
 end
