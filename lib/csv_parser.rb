@@ -9,7 +9,7 @@ require 'time_helpers'
 class Csv_parser
   def initialize(path, email_to)
     	@thePath = path
-    	if File.exists?(@theCSV)
+    	if File.exists?(@thePath)
       		#{EndTime:[<#lines || amount>, <throughput total>, <filename>, <time>]}
       		@all_csvs = parse_csv_list(find_csv(path))
       		@email_to = email_to
@@ -81,12 +81,12 @@ class Csv_parser
 	#Calculating the removed information
 	removed = [0, 0]
 	best_date = today
-	yday_path = @thePath + yesterday.strftine("%Y/%m/%d/")
-	
+	yday_path = @thePath + yesterday.strftime("%Y/%m/%d/")
+	yday_csv = ""	
 	#Find yesterday's file
 	Find.find(yday_path) do |f|
 		if File.file?(f) and /csv$/.match(f)
-			f_date = DateTime::strptime(s[9,19], "%Y-%m-%d.%H:%M:%S") # parse out date file date
+			f_date = DateTime::strptime(f.split('/')[-1][9,19], "%Y-%m-%d.%H:%M:%S") # parse out date file date
 			if f_date < best_date #Get the earliest file
 				yday_csv = f
 				best_date = f_date
@@ -94,26 +94,20 @@ class Csv_parser
 		end
 	end
 	
-	yday_csv = yday_path + yday_csv
-	
 	#Parse Yesterday's File
 	fh = File.open(yday_csv, 'r')
 	line = fh.gets #header
 	while (line = fh.gets)
 		data = line.split(',')
 		
-		todayData = latest[seas[data[0]] #this sea's information from today 
-		if todayData != nil and todayData != data[2] #an updated sea
-			if latest_seas[data[0]] != data[2]:
-				removed[0] += 1
-				removed[1] += sea_throughputs(line)
-   		elsif todayData == nil #a removed sea
+		todayData = latest_seas[data[0]] #this sea's information from today 
+		if todayData == nil or todayData != data[2] #a removed or an updated sea
 			removed[0] += 1
 			removed[1] += sea_throughputs(line)
 		end
 	end
 
-	removed_msg = "Removed SEAs: #{removed[0]} (#Statistics::round_to_two_dig(Statistics::to_gb(removed[1].to_f))}Gb)"
+	removed_msg = "Removed or Updated SEAs: #{removed[0]} (#{removed[1]} bytes)"#Statistics::round_to_two_dig(Statistics::to_gb(removed[1].to_f))}Gb)"
 
 	#Calculating the failed seas	
 	week_failed_sea = []
