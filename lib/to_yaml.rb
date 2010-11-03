@@ -4,12 +4,15 @@
 #
 # The idea is to map objects to sections and full yaml files
 #
-require 'yaml'
-require 'pp'
-
 # This will be mixed-in in our sections so we can dynamically
 # reset values in the instance hash that captures all the 
 # section key values
+#
+# Author: David Rio Deiors
+
+require 'yaml'
+require 'pp'
+
 module ResolveDynamicKeys
   def method_missing(name, *args, &block)
     name         = name.to_s; name.gsub!(/=/,'')

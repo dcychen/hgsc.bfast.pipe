@@ -2,6 +2,8 @@
 #
 # Cleans a SEA directory from temporary data
 #
+# Author: David Rio Deiros
+
 set -e
 
 error()

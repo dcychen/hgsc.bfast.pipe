@@ -4,6 +4,8 @@
 # 
 # Entry point to manage data transfers from the sequencing machines
 #
+# Author: Phillip Coleman
+
 require 'optparse' 
 require 'ostruct'
 require 'date'

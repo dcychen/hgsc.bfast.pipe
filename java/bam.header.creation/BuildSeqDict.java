@@ -15,7 +15,7 @@ import net.sf.samtools.SAMSequenceRecord;
 import net.sf.samtools.util.StringUtil;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Class to build sequence dictionary
  */
 public class BuildSeqDict

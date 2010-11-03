@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+#
+# Author: Phillip Coleman
+
 =begin
 
 == SYNOPSIS

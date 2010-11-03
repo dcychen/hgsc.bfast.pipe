@@ -6,7 +6,7 @@
 import java.io.File;
 import java.util.*;
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Class to search and return csfasta files
  */
 public class InputFiles

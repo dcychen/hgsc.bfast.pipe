@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Class to re-generate BAM header from specified command line parameters
- * @author niravs
+ * @author niravs (Nirav Shah)
  *
  */
 public class BuildBAMHeader

@@ -1,6 +1,9 @@
 #!/usr/bin/ruby
 #
-#
+# grabs all of the analysis directories completed from the previous month
+# and place them into the backup file
+# 
+# Author: David Chen
 
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require 'time_helpers'
@@ -34,8 +37,7 @@ month = last_month.split("-")[1]
 
 paths.each do |d|
   Find.find(d) do |p| 
-#  if /#{year}\/#{month}\//.match(p) && valid?(p.split("/")[-1])
-if /#{year}\/07\//.match(p) && valid?(p.split("/")[-1])
+  if /#{year}\/#{month}\//.match(p) && valid?(p.split("/")[-1])
     Backup::backup_data(backup_file, p) 
     end
   end

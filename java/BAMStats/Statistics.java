@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * The class that computes the statistics for the specified BAM/SAM file
  */
 public class Statistics

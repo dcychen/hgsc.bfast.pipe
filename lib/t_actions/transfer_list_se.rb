@@ -7,6 +7,7 @@
 # event information. This consists of run name, type and the
 # paths for the files.
 #
+# Author: Phillip Coleman
 
 main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require main_dir + "/lib/se_inst.rb"

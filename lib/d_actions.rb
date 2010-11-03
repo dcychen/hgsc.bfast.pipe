@@ -1,3 +1,6 @@
+#
+# Author: David Rio Deiors
+
 class Driver_actions
   def initialize(action_string)
     @a_string = action_string

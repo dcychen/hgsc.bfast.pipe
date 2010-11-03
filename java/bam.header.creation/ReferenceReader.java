@@ -11,7 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Class that reads ReferenceList.xml and build "Reference" class instance
  */
 public class ReferenceReader

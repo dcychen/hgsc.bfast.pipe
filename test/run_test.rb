@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+#Author: nirav (Nirav Shah)
+
 require 'fileutils'
 #require '../lib/config.rb'
 require '../lib/helpers.rb'

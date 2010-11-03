@@ -4,6 +4,8 @@
 # 
 # Main entry point to perform bfast analysis 
 #
+# Author: David Rio Deiros
+
 require 'optparse' 
 require 'ostruct'
 require 'date'

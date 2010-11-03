@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
+# 
 #
-#
+# Author: David Chen
 
 $:.unshift File.join(File.dirname(__FILE__))
 require 'lock'
@@ -18,7 +19,6 @@ module Backup
     if File.exist?(lock)
       add_line_to_file(temp, path)
     else
-#      create_lock_file(lock)
       Lock::create_lock_file(lock)
       if File.exist?(temp)
         File.open(temp).readline do |r|

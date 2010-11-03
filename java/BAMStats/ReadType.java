@@ -4,7 +4,7 @@
 package BAMStats;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Enum to represent whether to consider read 1, read 2 or fragments
  */
 public enum ReadType

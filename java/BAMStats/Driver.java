@@ -4,7 +4,7 @@
 package BAMStats;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Class to drive this application.
  */
   public class Driver

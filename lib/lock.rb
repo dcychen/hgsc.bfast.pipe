@@ -1,9 +1,8 @@
 #!/usr/bin/ruby
 #
-#
+# Author: David Chen 
 
 module Lock
-
   def self.remove_lock_file(file)
     FileUtils.rm(file)
   end

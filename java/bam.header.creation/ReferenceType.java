@@ -1,7 +1,7 @@
 //package RegenerateBAMHeader;
 /**
  * Enum to select correct reference
- * @author niravs
+ * @author niravs (Nirav Shah)
  *
  */
 public enum ReferenceType 

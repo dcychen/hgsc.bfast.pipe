@@ -1,5 +1,7 @@
 # vim: set filetype=ruby expandtab tabstop=2 shiftwidth=2 tw=80
 #
+# Author: David Rio Deiros
+
 require 'find'
 require 'date'
 require 'fileutils'

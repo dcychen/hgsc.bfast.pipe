@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby19
 #
 # vim: set filetype=ruby expandtab tabstop=2 shiftwidth=2 tw=80
+#
+# Author: David Chen 
+
 require 'time'
 require 'ostruct'
 require 'date'

@@ -4,16 +4,18 @@
 # SOLiD data. It checks the exit code and sends and
 # email
 #
+# Author: David Rio Deiros
+
 help()
 {
-	echo "$1"
+  echo "$1"
   cat <<EOF
 Usage:
   $0 cmd output_path mail_to
 Example:
   $0 "./bin/list_system_data.rb /stornext/snfs4/next-gen/solid/analysis" /tmp "deiros@bcm.edu dc12@bcm.edu"
 EOF
-	exit 1
+  exit 1
 }
 
 send_email()
@@ -87,8 +89,8 @@ if [ $exit_code -eq 0 ]
 then
   send_email "OK"
   create_symlink
-	exit 0
+  exit 0
 else
   send_email "ERROR"
-	exit 1
+  exit 1
 fi

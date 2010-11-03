@@ -1,7 +1,4 @@
 #!/usr/bin/ruby
-
-require 'helpers'
-
 # This class encapsulates a Sequence Event name
 #
 # Example: 0312_20100211_1_SP_ANG_LVNC109718_1_1sA_01003280944_3
@@ -18,6 +15,10 @@ require 'helpers'
 #  + mp?            : returns true if seq_event is mate pair, false otherwise 
 #  + to_s           : returns the run name for this sequence event
 #  + get_run_name   : returns the run name from the specified path
+#
+# Author: David Rio Deiros
+
+require 'helpers'
 
 class Sequence_event
   def initialize(seq_event)

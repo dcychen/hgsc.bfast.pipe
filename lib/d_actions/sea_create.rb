@@ -1,3 +1,6 @@
+#
+# Author: David Rio Deiros
+
 class SEA_create
   def initialize
   end

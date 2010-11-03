@@ -3,6 +3,8 @@
 # This tools creates the necessary cluster JOBS to complete 
 # a SEA (Sequence Event Analysis)
 #
+# Author: David Rio Deiros
+
 $: << File.join(File.dirname(File.dirname($0)), "lib")
 require 'load_libs'
 

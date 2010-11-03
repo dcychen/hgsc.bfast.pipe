@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  * Class that encapsulates parameters passed at the command line
  */
 public class InputParameters

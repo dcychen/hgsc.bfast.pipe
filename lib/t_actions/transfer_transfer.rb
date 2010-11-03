@@ -6,6 +6,7 @@
 # and run name. It then calls the transfer method using these
 # parameters.
 #
+# Author: Phillip Coleman
 
 main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require main_dir + "/lib/solid_transfer.rb"

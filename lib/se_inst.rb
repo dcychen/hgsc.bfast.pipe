@@ -12,6 +12,8 @@
 #     instrument.  It will return the information of the specific SE if its 
 #     given.
 #   place_done_flag(se) - create a .slide_done.txt for the given SE on inst.
+#
+# Author: David Chen
 
 
 $:.unshift File.join(File.dirname(__FILE__))

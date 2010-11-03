@@ -6,6 +6,7 @@
 # and passes it to the appropriate methods to output the disk
 # usage.
 #
+# Author: Phillip Coleman
 
 main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require main_dir + "/lib/se_inst.rb"

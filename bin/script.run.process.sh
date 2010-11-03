@@ -4,6 +4,7 @@
 # that we can use later to figure out what jobs complited and which
 # didn't
 #
+# Author: David Rio Deiros
 
 mail_to="pellon@bcm.edu pc2@bcm.edu"
 #mail_to="dc12@bcm.edu"

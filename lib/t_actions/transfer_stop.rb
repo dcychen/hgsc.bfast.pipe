@@ -5,6 +5,7 @@
 # This class takes in a list of machines and stops all rsync transfers
 # from that machine.
 #
+# Author: Phillip Coleman
 
 $main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require $main_dir + "/lib/solid_transfer.rb"

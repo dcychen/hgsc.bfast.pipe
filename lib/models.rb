@@ -1,8 +1,10 @@
+# Find the proper DB
+#
+# Author: David Rio Deiros
+
 require 'sequel'
 require 'pathname'
 
-# Find the proper DB
-#
 dbs_dir = File.join(File.dirname(File.dirname(__FILE__)), 'dbs')
 DB_URL = case (`uname`.chomp)
   when /Darwin/

@@ -25,6 +25,8 @@
 #     - checks if the SE raw data have been transferred and ready for analysis
 #   stop_rsync
 #     - kills the rsync processes that is from the given ip
+#
+# Author: David Chen
 
 $:.unshift File.join(File.dirname(__FILE__))
 require 'se_inst'

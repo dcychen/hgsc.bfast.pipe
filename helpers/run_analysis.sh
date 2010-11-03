@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+# Author: David Rio Deiros
 
 curr_dir=`pwd`
 user_name=`id -u -n`
@@ -8,12 +9,8 @@ prod_pipe=""
 # For p-solid user, use the production version of the pipeline
 # For any other user, use current local working copy
 if [ "$user_name" = "p-solid" ]; then
-  #prod_pipe="/stornext/snfs5/next-gen/solid/hgsc.solid.pipeline/hgsc.bfast.pipe"
-  prod_pipe="/stornext/snfs5/next-gen/dc12-scratch/solid_pipe/hgsc.bfast.pipe"
   prod_pipe="`dirname $0`/.."
 else
-#  prod_pipe=${curr_dir/test*/''}
-#  prod_pipe="/stornext/snfs5/next-gen/dc12-scratch/solid_pipe/moab"
   prod_pipe="`dirname $0`/.."
 fi
 

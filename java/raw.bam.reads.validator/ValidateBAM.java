@@ -8,7 +8,7 @@ import net.sf.samtools.SAMFileReader.ValidationStringency;
 import java.io.*;
 
 /**
- * @author niravs
+ * @author niravs (Nirav Shah)
  *
  */
 public class ValidateBAM

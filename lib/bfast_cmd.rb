@@ -1,5 +1,8 @@
-require 'tempfile'
 # vim: set filetype=ruby expandtab tabstop=2 shiftwidth=2 tw=80
+#
+# Author: David Rio Deiros
+
+require 'tempfile'
 
 %w(yaml fileutils singleton digest/md5).each { |dep| require dep }
 

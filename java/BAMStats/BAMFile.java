@@ -10,6 +10,9 @@ import net.sf.samtools.*;
 import net.sf.samtools.SAMFileReader.ValidationStringency;
 import net.sf.samtools.util.CloseableIterator;
 
+/**
+ * @author niravs (Nirav Shah)
+ */
 
 /**
  * The class that encapsulates the functions on a BAM file

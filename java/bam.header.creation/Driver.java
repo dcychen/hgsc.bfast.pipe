@@ -1,7 +1,7 @@
 //package RegenerateBAMHeader;
 /**
  * Class that acts as entry point of the application
- * @author niravs
+ * @author niravs (Nirav Shah)
  */
 
 public class Driver

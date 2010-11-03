@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby19
+#
+# Author: David Rio Deiros
 
 $: << File.join(File.dirname(File.dirname($0)), "lib")
 require 'load_libs'

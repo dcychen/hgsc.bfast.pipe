@@ -3,8 +3,8 @@
  */
 
 /**
- * @author niravs
- *
+ * @author niravs (Nirav Shah)
+ * 
  */
 public class Reference
 {

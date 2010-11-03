@@ -1,6 +1,6 @@
 #!/bin/bash
 
-picardPath="/stornext/snfs1/next-gen/software/picard-tools/current"
+picardPath="/stornext/snfs5/next-gen/software/picard-tools/current"
 
 samJarName=`ls $picardPath"/"sam-*.jar`
 picardJarName=`ls $picardPath"/"picard-*.jar`

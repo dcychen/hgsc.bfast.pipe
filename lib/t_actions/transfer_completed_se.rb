@@ -5,6 +5,7 @@
 # This class parses the machine and run names then calls the
 # appropriate methods to place the slide_done flag.
 #
+# Author: Phillip Coleman
 
 main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require main_dir + "/lib/se_inst.rb"

@@ -6,6 +6,7 @@
 # up a ssh connection to them. If succesful it returns that
 # the machine is active.
 #
+# Author: Phillip Coleman
 
 main_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
 require main_dir + "/lib/ping.rb"

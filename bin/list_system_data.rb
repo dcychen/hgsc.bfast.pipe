@@ -4,7 +4,8 @@
 # 
 # Dumps to csv (STDOUT) all the info about the SEAs
 # 
-# 
+# Author: David Rio Deiros 
+
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
 require 'ostruct'
