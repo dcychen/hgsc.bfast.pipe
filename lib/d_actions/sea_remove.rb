@@ -33,6 +33,7 @@ class SEA_remove
     # C. Remove the dir
     puts Helpers::kill_jobs_for(sea)
     puts Helpers::remove_dir(sea_dirs_found[0])
+    puts Helpers::remove_lims(sea)
     Helpers::log "Done."
   end
 end

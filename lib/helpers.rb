@@ -58,7 +58,7 @@ module Helpers
       log("Looking for raw data in: #{path}")
       Find.find(path) do |path|
         found << path if File.file?(path)             and
-                         !File.symlink?(path)         and
+#                         !File.symlink?(path)         and
                          path =~ /(.csfasta$|.qual$)/ and
                          sea.same_name_as?(path)
       end
@@ -124,6 +124,12 @@ module Helpers
     cmd << "do\n"
     cmd << "  bkill $i\n"
     cmd << "done\n"
+  end
+  
+  def self.remove_lims(sea)
+    cmd = "\n### remove from LIMS\n"
+    cmd << "curl -m 120 -d \"name=#{sea}\" -X DELETE " +
+           "http://test-gen2.hgsc.bcm.tmc.edu/reportlims/jaxrs/report/csvparse"
   end
 
   def self.create_starting_script(sea, special_run)

@@ -6,7 +6,7 @@
 # individual actions. It loads all of the action classes, then
 # calls the run method for the specified one.
 #
-# Author: David Rio Deiors
+# Author: Phillip Coleman
 
 class Transfer_actions
   def initialize(action_string)

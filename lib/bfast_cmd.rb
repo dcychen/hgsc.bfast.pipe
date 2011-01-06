@@ -150,7 +150,7 @@ class BfastCmd
 
   def capture_stats
     "#{@config.global_java_vm} -cp #{@config.capture_j_classpath} " +
-    "-Xmx6000M CaptureStatsBAM4 " +
+    "-Xmx6000M CaptureStatsBAM5 " +
     "-o #{@config.capture_stats_dir}/#{root_name} -t " +
     "#{@config.capture_chip_design} " +
     "-i #{bam_file_sorted_dups} -w -d"
