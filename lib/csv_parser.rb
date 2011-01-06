@@ -10,6 +10,8 @@ require 'time_helpers'
 
 class Csv_parser
   def initialize(path, email_to)
+    @special_dirs = [ "0047", "0051", "0064", "0068", "0077", "0122" ]
+
     @thePath = path+'/'
     if File.exists?(@thePath)
         #{EndTime:[<#lines || amount>, <throughput total>, <filename>, <time>]}
@@ -128,7 +130,12 @@ class Csv_parser
       if /Skipping/.match(f)
         sea = Sequence_event.new(f.split()[2].chomp)
         if !sea.job_in_cluster?
-          sea_path = Helpers::dir_exists?(sea)[0]
+          sea_path = ""
+          if special_dir?(sea.instrument)
+            sea_path = Helpers::dir_exists?(sea, true)[0]
+          else
+            sea_path = Helpers::dir_exists?(sea)[0]
+          end
           if !sea_path.nil?
             failed << sea_path 
           end
@@ -214,5 +221,11 @@ class Csv_parser
       end
     end
     temp
+  end
+
+  private
+
+  def special_dir?(sea)
+    return @special_dirs.include?(sea) 
   end
 end
