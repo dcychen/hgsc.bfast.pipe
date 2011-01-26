@@ -129,7 +129,7 @@ module Helpers
   def self.remove_lims(sea)
     cmd = "\n### remove from LIMS\n"
     cmd << "curl -m 120 -d \"name=#{sea}\" -X DELETE " +
-           "http://test-gen2.hgsc.bcm.tmc.edu/reportlims/jaxrs/report/csvparse"
+           "http://lims-2.hgsc.bcm.tmc.edu:8180/gen2lims-reporting/jaxrs/report/csvparse"
   end
 
   def self.create_starting_script(sea, special_run)
@@ -154,4 +154,57 @@ module Helpers
       Helpers::log "#{done_slides} cannot be found", 1
     end
   end
+
+  # dump the start and end time of the SEA
+  def self.start_end_time_output(sea_dir)
+    tmp_start = "01/01/01_01:00"
+    tmp_end = "01/01/01_01:00"
+    time_stamp = "#{sea_dir}/time_stamps.txt"
+    if File.exist?(time_stamp)
+      File.open(time_stamp,"r").each do |l|
+        if /START/.match(l)
+          tmp_start = l.split()[1].chomp
+        elsif /END/.match(l)
+          tmp_end = l.split()[1].chomp
+        end
+      end
+    end
+    return tmp_start + DELIMITER + tmp_end
+  end
+
+  # checks if the sea is FR MP
+  def self.check_fr?(name)
+    if /_[\d]*sA_/.match(name)
+      return "FR"
+    else
+      return "MP"
+    end
+  end
+
+  # dumps the meta data of the SEA
+  def self.gather_meta_data(sea_dir)
+    tmp_ref = "hg18"
+    tmp_bfast = "0.6.4c"
+    tmp_picard = "1.7"
+    tmp_mode = Helpers::check_fr?(sea_dir.split("/")[-1])
+    tmp_gatk = "NA"
+
+    meta = "#{sea_dir}/metadata.txt"
+    if File.exist?(meta)
+      if /REF/.match(l)
+        tmp_ref = l.split()[1].chomp
+      elsif /BFAST/.match(l)
+        tmp_bfast = l.split()[1].chomp
+      elsif /PICARD/.match(l)
+        tmp_picard = l.split()[1].chomp
+      elsif /MODE/.match(l)
+        tmp_mode = l.split()[1].chomp
+      elsif /GATK/.match(l)
+        tmp_gatk = l.split()[1].chomp
+      end
+    end
+    return tmp_ref + DELIMITER + tmp_bfast + DELIMITER + tmp_picard + DELIMITER +
+           tmp_mode + DELIMITER + tmp_gatk
+  end
+  
 end

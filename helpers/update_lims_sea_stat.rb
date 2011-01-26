@@ -3,7 +3,8 @@
 # vim: set filetype=ruby expandtab tabstop=2 shiftwidth=2 tw=80
 # 
 # Updates LIMS
-# usage: ruby update_lims.rb SEA_path 
+# usage: ruby update_lims.rb  
+#   It will use the current path that it is in.
 #
 # Author: David Chen 
 
@@ -24,7 +25,7 @@ KEYS_PER_TAG = %w{
 
 # csv header
 HEADER = %w{
-  name start end bam_path 
+  name start end ref bfast picard mode gatk bam_path 
   F3_total_reads_considered F3_total_reads_mapped F3_throughput F3_effective_throughput
   R3_total_reads_considered R3_total_reads_mapped R3_throughput R3_effective_throughput
 }
@@ -95,31 +96,17 @@ def to_hash(files)
   "Not the expected # of key/values: #{h.size}. Bailing out."
 end
 
-# Dump a csv line in the proper format
+# Dump a line in the proper format
 def dump_line(sea_dir, bams, stats)
-=begin
-  csv_line = sea_dir.split("/")[-1] + DELIMITER
-  csv_line << start_end_time_output(sea_dir) + DELIMITER
-  csv_line << bams[0] + DELIMITER
-  tags = stats.size == 4 ? [ "F3" ] : [ "F3", "R3" ]
-
-  tags.each do |tag|
-    KEYS_PER_TAG.each do |k| 
-      key = k.gsub(/XX/, tag)
-      if stats[key].nil?
-        return "I cannot find key: #{key}, n_keys: #{stats.size}. Bye."
-      end
-      csv_line << stats[key].gsub(/,/,"") + DELIMITER
-    end
-  end
-#  csv_line << start_end_time_output(sea_dir) + DELIMITER
-  csv_line
-=end
-
   line = {}
   line[:name] = sea_dir.split("/")[-1]
-  line[:start] = start_end_time_output(sea_dir).split(",")[0]
-  line[:end] =  start_end_time_output(sea_dir).split(",")[1]
+  line[:start] = Helpers::start_end_time_output(sea_dir).split(",")[0]
+  line[:end] = Helpers::start_end_time_output(sea_dir).split(",")[1]
+  line[:ref] = Helpers::gather_meta_data(sea_dir).split(",")[0]
+  line[:bfast] = Helpers::gather_meta_data(sea_dir).split(",")[1]
+  line[:picard] = Helpers::gather_meta_data(sea_dir).split(",")[2]
+  line[:mode] = Helpers::gather_meta_data(sea_dir).split(",")[3]
+  line[:gatk] = Helpers::gather_meta_data(sea_dir).split(",")[4]
   line[:bam_path] = bams[0]
   tags = stats.size == 4 ? [ "F3" ] : [ "F3", "R3" ]
   tags.each do |tag|
@@ -134,7 +121,7 @@ def dump_line(sea_dir, bams, stats)
   line
 end
 
-
+=begin
 # dump the start and end time of the SEA
 def start_end_time_output(sea_dir)
   tmp_start = "01/01/01_01:00"
@@ -152,10 +139,44 @@ def start_end_time_output(sea_dir)
   return tmp_start + DELIMITER + tmp_end
 end
 
+# checks if the sea is FR MP
+def check_fr?(name)
+  if /_[\d]*sA_/.match(name)
+    return "FR"
+  else
+    return "MP"
+  end
+end
+
+# dumps the meta data of the SEA
+def gather_meta_data(sea_dir)
+  tmp_ref = "hg18"
+  tmp_bfast = "0.6.4c"
+  tmp_picard = "1.7"
+  tmp_mode = check_fr?(sea_dir.split("/")[-1])
+  tmp_gatk = "NA"
+
+  meta = "#{sea_dir}/metadata.txt"
+  if File.exist?(meta)
+    if /REF/.match(l)
+      tmp_ref = l.split()[1].chomp
+    elsif /BFAST/.match(l)
+      tmp_bfast = l.split()[1].chomp
+    elsif /PICARD/.match(l)
+      tmp_picard = l.split()[1].chomp
+    elsif /MODE/.match(l)
+      tmp_mode = l.split()[1].chomp
+    elsif /GATK/.match(l)
+      tmp_gatk = l.split()[1].chomp
+    end
+  end
+  return tmp_ref + DELIMITER + tmp_bfast + DELIMITER + tmp_picard + DELIMITER +
+         tmp_mode + DELIMITER + tmp_gatk
+end
+=end
 # Per each SEA, find the bams, the stats
 # and dump a csv line with the data
 def process_sea(path)
-#  seas.each do |s, sd| # sea, sea_data
   bam   = find_bams(path)
   stats = find_stats_files(path)
   Helpers::log("Found BAMs: #{bam.size} STAT_FILEs: #{stats.size}")
@@ -171,7 +192,7 @@ def process_sea(path)
       end
     end
   else
-    Helpers::log("Skipping #{s}")
+    Helpers::log("Skipping #{path}")
   end
   false 
 end
@@ -189,7 +210,7 @@ if r_value != false
   tmp = cmd.split("&")
   
   cmd = tmp.join("&") + "\" -X POST "+
-        "http://test-gen2.hgsc.bcm.tmc.edu/reportlims/jaxrs/report/csvparse"
+        "http://lims-2.hgsc.bcm.tmc.edu:8180/gen2lims-reporting/jaxrs/report/csvparse"
   puts cmd
   system(cmd)
 end 

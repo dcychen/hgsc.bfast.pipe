@@ -52,10 +52,11 @@ class App
       opts.on('-v', '--version')        { output_version ; exit 0 }
       opts.on('-h', '--help')           { output_help }
 
-      opts.on('-r', '--run_name r')     {|r| @options.run_name = r }
-      opts.on('-c', '--c_design c')     {|c| @options.c_design = c }
-      opts.on('-q', '--queue    q')     {|q| @options.queue    = q }
-      opts.on('-a', '--action   a')     {|a| @options.action   = a }
+      opts.on('-r', '--run_name  r')    {|r| @options.run_name = r }
+      opts.on('-c', '--c_design  c')    {|c| @options.c_design = c }
+      opts.on('-q', '--queue     q')    {|q| @options.queue    = q }
+      opts.on('-a', '--action    a')    {|a| @options.action   = a }
+      opts.on('-f', '--reference f')    {|f| @options.ref      = f }
       opts.on('-m', '--force_mp')       {    @options.force_mp = true }
       opts.on('-e', '--force_pe')       {    @options.force_pe = true }
       opts.on('-n', '--no_trans_check') {    @options.no_trans_check = true }
@@ -92,6 +93,7 @@ class App
       @sea            = @r_name.nil? ? nil : Sequence_event.new(@r_name)
       @c_design       = @options.c_design || nil
       @queue          = @options.queue    || "normal"
+      @ref            = @options.ref 
       @action         = @options.action
       @force_mp       = @options.force_mp || false
       @force_pe       = @options.force_pe || false
@@ -142,6 +144,7 @@ class App
         :force_pe       => @force_pe,
         :no_trans_check => @no_trans_check,
         :special_run    => @special_run,
+        :ref            => @ref,
         :pival          => @pival  ,
       }
     end
@@ -170,6 +173,7 @@ Options:
  -r, --run_name       Run_name
  -a, --action         action to perform 
 
+ -f, --reference      path of the reference
  -m, --force_mp       Force MP despite the SE is a PE
  -e, --force_pe       Force PE despite the SE is a FR
  -n, --no_trans_check Force analysis without checking raw data transfer

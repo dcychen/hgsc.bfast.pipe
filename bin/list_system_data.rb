@@ -112,7 +112,8 @@ end
 def dump_csv_line(sea_dir, bams, stats)
   delimiter = ", "
   csv_line = sea_dir.split("/")[-1] + DELIMITER
-  csv_line << start_end_time_output(sea_dir) + DELIMITER
+  csv_line << Helpers::start_end_time_output(sea_dir) + DELIMITER
+  csv_line << Helpers::gather_meta_data(sea_dir) + DELIMITER
   csv_line << bams[0] + DELIMITER
   tags = stats.size == 4 ? [ "F3" ] : [ "F3", "R3" ]
 
@@ -128,7 +129,32 @@ def dump_csv_line(sea_dir, bams, stats)
 #  csv_line << start_end_time_output(sea_dir) + DELIMITER
   csv_line
 end
-
+=begin
+# dumps the meta data of the SEA
+def gather_meta_data(sea_dir)
+  tmp_ref = "hg18"
+  tmp_bfast = "0.6.4c"
+  tmp_picard = "1.7"
+  tmp_mode = "FR"
+  tmp_gatk = "NA"
+  
+  meta = "#{sea_dir}/metadata.txt"
+  if File.exist?(meta)
+    if /REF/.match(l)
+      tmp_ref = l.split()[1].chomp
+    elsif /BFAST/.match(l)
+      tmp_bfast = l.split()[1].chomp
+    elsif /PICARD/.match(l)
+      tmp_picard = l.split()[1].chomp
+    elsif /MODE/.match(l)
+      tmp_mode = l.split()[1].chomp
+    elsif /GATK/.match(l)
+      tmp_gatk = l.split()[1].chomp
+    end
+  end
+  return tmp_ref + DELIMITER + tmp_bfast + DELIMITER + tmp_picard + DELIMITER +
+         tmp_mode + DELIMITER + tmp_gatk
+end
 
 # dump the start and end time of the SEA
 def start_end_time_output(sea_dir)
@@ -146,6 +172,7 @@ def start_end_time_output(sea_dir)
   end
   return tmp_start + DELIMITER + tmp_end
 end
+=end
 
 # Load Dirs to use to look for SEAs
 def load_volumes(a)
