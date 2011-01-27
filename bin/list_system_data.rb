@@ -23,7 +23,7 @@ KEYS_PER_TAG = %w{
 
 # csv header
 HEADER = %w{
-  name start end bam_path 
+  name start end ref bfast picard mode gatk bam_path
   F3_total_reads_considered F3_total_reads_mapped F3_throughput F3_effective_throughput
   R3_total_reads_considered R3_total_reads_mapped R3_throughput R3_effective_throughput
 }

@@ -72,4 +72,4 @@ capture_options:
 countreads_options:
  bam_reads_val_jar: java/raw.bam.reads.validator/raw.bam.reads.validator.jar
 success_options:
- email_to: "pellon@bcm.edu gokwuonu@bcm.edu jirehs@bcm.edu pc2@bcm.edu"
+ email_to: "gokwuonu@bcm.edu jirehs@bcm.edu pc2@bcm.edu"
