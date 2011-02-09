@@ -184,7 +184,7 @@ module Helpers
   # dumps the meta data of the SEA
   def self.gather_meta_data(sea_dir)
     tmp_ref = "hg18"
-    tmp_bfast = "0.6.4c"
+    tmp_bfast = "0.6.4d"
     tmp_picard = "1.7"
     tmp_mode = Helpers::check_fr?(sea_dir.split("/")[-1])
     tmp_gatk = "NA"
