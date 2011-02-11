@@ -26,7 +26,7 @@ class Csv_parser
 
   def run
     email_from = "p-solid@bcm.edu"
-    error_email_to = "dc12@bcm.edu"
+    error_email_to = "english@bcm.edu"
     #Day name format 
     #csv.dump.YYYY-MM-DD.HH:MM:SS.csv
     today =  DateTime::parse((Time.now).strftime("%Y-%m-%d"))
@@ -184,10 +184,10 @@ class Csv_parser
     throughputs = 0
     temp = l.split(",")
     #Grabbing the F throughput
-    throughputs = throughputs + temp[6].gsub('.','').to_i
+    throughputs = throughputs + temp[10].gsub('.','').to_i
     #If there is a R throughput, grab it
-    if !temp[10].nil?
-      throughputs = throughputs + temp[10].gsub('.','').to_i
+    if !temp[14].nil?
+      throughputs = throughputs + temp[14].gsub('.','').to_i
     end
     
     throughputs

@@ -191,16 +191,18 @@ module Helpers
 
     meta = "#{sea_dir}/metadata.txt"
     if File.exist?(meta)
-      if /REF/.match(l)
-        tmp_ref = l.split()[1].chomp
-      elsif /BFAST/.match(l)
-        tmp_bfast = l.split()[1].chomp
-      elsif /PICARD/.match(l)
-        tmp_picard = l.split()[1].chomp
-      elsif /MODE/.match(l)
-        tmp_mode = l.split()[1].chomp
-      elsif /GATK/.match(l)
-        tmp_gatk = l.split()[1].chomp
+      File.open(meta, "r").each do |l|
+        if /REF/.match(l)
+          tmp_ref = l.split()[1].chomp
+        elsif /BFAST/.match(l)
+          tmp_bfast = l.split()[1].chomp
+        elsif /PICARD/.match(l)
+          tmp_picard = l.split()[1].chomp
+        elsif /MODE/.match(l)
+          tmp_mode = l.split()[1].chomp
+        elsif /GATK/.match(l)
+          tmp_gatk = l.split()[1].chomp
+        end
       end
     end
     return tmp_ref + DELIMITER + tmp_bfast + DELIMITER + tmp_picard + DELIMITER +
