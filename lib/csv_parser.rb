@@ -184,10 +184,10 @@ class Csv_parser
     throughputs = 0
     temp = l.split(",")
     #Grabbing the F throughput
-    throughputs = throughputs + temp[10].gsub('.','').to_i
+    throughputs = throughputs + temp[11].gsub('.','').to_i
     #If there is a R throughput, grab it
-    if !temp[14].nil?
-      throughputs = throughputs + temp[14].gsub('.','').to_i
+    if !temp[15].nil?
+      throughputs = throughputs + temp[15].gsub('.','').to_i
     end
     
     throughputs
