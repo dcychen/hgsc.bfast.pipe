@@ -121,10 +121,6 @@ end
 #dep = moab.add_job("flag_db_completed", cmds.fdb_completed, "", nil, fdb_deps)
 #moab.add_job("email_success", cmds.email_success, "", nil, [dep])
 
-# updating LIMS
-moab.add_job_to_file("clean2fin", "ruby #{File.dirname(File.dirname($0))}" +
-            "/helpers/update_lims_sea_stat.rb ", "")
-
 # Clean up dirs
 #clean_deps = config.global_input_CAP == 0 ? s_deps : [dep]
 #email_deps = moab.add_job("clean_up", cmds.clean_up, "", nil, clean_deps)
@@ -140,6 +136,11 @@ moab.add_job_to_file("clean2fin", cmds.email_success, "")
 #            "END time_stamps.txt", "", nil, [email_deps])
 moab.add_job_to_file("clean2fin", "#{File.dirname(File.dirname($0))}" +
             "/helpers/create_time.sh END time_stamps.txt", "")
+
+# updating LIMS
+moab.add_job_to_file("clean2fin", "ruby #{File.dirname(File.dirname($0))}" +
+            "/helpers/update_lims_sea_stat.rb ", "")
+
 moab.add_job_from_file("clean2fin", "", re_stats, s_deps)
 
 moab.create_file
