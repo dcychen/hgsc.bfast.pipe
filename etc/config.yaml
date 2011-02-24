@@ -1,0 +1,26 @@
+java: /stornext/snfs5/next-gen/software/jdk1.6.0_01/bin/java
+tmp_space: /space1/tmp
+picard:
+  merge_jar: /stornext/snfs5/next-gen/software/picard-tools/current/MergeSamFiles.jar
+  merge_mem: 8000
+  dups_jar: /stornext/snfs5/next-gen/software/picard-tools/current/MarkDuplicates.jar
+  dups_mem: 8000
+cap_stats:
+  class_path: /stornext/snfs5/next-gen/software/hgsc/capture_stats/sam-1.07.jar:/stornext/snfs5/next-gen/software/hgsc/capture_stats/picard-1.07.jar:/stornext/snfs5/next-gen/software/hgsc/capture_stats:.
+  cap_script: CaptureStatsBAM5
+  cap_mem: 6000
+snp:
+  class_path: /stornext/snfs0/next-gen/yw14-scratch/picard-tools/current/sam-1.18.jar:/stornext/snfs0/next-gen/yw14-scratch/picard-tools/current/picard-1.18.jar:/stornext/snfs0/next-gen/yw14-scratch/MNBLIB
+  filterbam_mem: 4000
+  filterpile_mem: 2000
+  annotate: /stornext/snfs0/next-gen/project_SNP_calling/software/annotate_Ardmore.pl
+  mirna_annotate: /stornext/snfs0/next-gen/yw14-scratch/miRNAnnotate/miRNAnnotate/miRNAnnotate.pl
+rg:
+  class_path: /stornext/snfs0/next-gen/yw14-scratch/picard-tools/current/sam-1.18.jar:/stornext/snfs0/next-gen/yw14-scratch/programs
+  rg_id: 0
+  rg_mem: 1000
+samtools: /stornext/snfs0/next-gen/yw14-scratch/samtools-0.1.7a/samtools
+h18_ref: /stornext/snfs0/next-gen/yw14-scratch/hsap_36.1_hg18.fa
+h19_ref: /stornext/snfs0/next-gen/hg19/GRCh37-lite.fa
+outdir: /stornext/snfs0/next-gen/solid/p-merge-work/merges
+queue: normal
