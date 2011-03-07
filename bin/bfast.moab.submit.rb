@@ -139,7 +139,7 @@ moab.add_job_to_file("clean2fin", "#{File.dirname(File.dirname($0))}" +
 
 # updating LIMS
 moab.add_job_to_file("clean2fin", "ruby #{File.dirname(File.dirname($0))}" +
-            "/helpers/update_lims_sea_stat.rb ", "")
+            "/helpers/update_lims_sea_stat.rb all", "")
 
 moab.add_job_from_file("clean2fin", "", re_stats, s_deps)
 

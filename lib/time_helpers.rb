@@ -64,13 +64,15 @@ module TimeHelpers
   #           case "pm" - same date at 11:59 pm 
   #2010-05-10, am => 05 10 00:0:0 2010
   #2010-05-10, pm => 05 10 23:59:59 2010
-  def self.create_time_from_date(date, am_pm)
+  def self.create_time_from_date(date, am_pm_time)
     date_split = date.split("-")
     time = ""
-    if am_pm == "am"
+    if am_pm_time == "am"
       time = parse_time("00:0:0")
-    else
+    elsif am_pm_time == "pm"
       time = parse_time("23:59:59")
+    else
+      time = parse_time(am_pm_time)
     end
     Time.local(date_split[0], date_split[1], date_split[2],
               time.h, time.m, time.s)

@@ -35,6 +35,7 @@ require 'emailer'
 require 'net/ssh'
 require 'sequence_event'
 require 'backup'
+require 'time_helpers'
 
 class Solid_transfer
   EMAIL_FROM = "p-solid@bcm.edu"
@@ -53,6 +54,9 @@ class Solid_transfer
                    "#{@machine}_done_slides.txt"
     @backup_file = "#{ENV['HOME']}/.hgsc_solid/backup/" +
                    "solid_raw_backup.txt"
+    @trans_slides = "#{ENV['HOME']}/.hgsc_solid/automation/" +
+                    "transferred.txt"
+    @NUM_DAY_LOCK = 1
   end
    
   def transfer(snfs, rname = "all", send_email=1)
@@ -70,7 +74,7 @@ class Solid_transfer
         if check_transferred?(se, @done_slides)
           Helpers::log("#{se} has been transferred. skipping.")
         else
-          if !check_lock(se)
+          if !check_lock(se) #|| lock_remove_after_day(1, se)
             create_lock(se)
             check_new?(se, @new_slides, send_email)
             data[se].each do |p|
@@ -84,6 +88,24 @@ class Solid_transfer
       end
     end
   end
+
+  def lock_remove_after_day(day, se)
+     lock_f = "#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{se}.lock"
+     if File.exist?(lock_f)
+       lock_f_t = File.new(lock_f).mtime
+       active_f_t = File.new("#{ENV['HOME']}/.hgsc_solid/#{@machine}/" + 
+                             "#{@machine}_active_transfer.txt").mtime
+       difference = active_f_t - lock_f_t
+       if difference > (TimeHelpers::SECS_IN_DAY * day.to_i)
+         return true
+       else
+         return false
+       end
+     else
+       return true
+     end
+  end
+
 
   # verifying if the files transferred is completed and correct
   def completed_se(snfs, rname = "all", send_email=1)
@@ -107,8 +129,11 @@ class Solid_transfer
         Helpers::log("#{d} has slide done flag, but no SE found..? exiting.",1)
       end
       keys.each do |k|
-        if !check_lock(k)
+         if lock_remove_after_day(@NUM_DAY_LOCK, k)
+          # if lock file is not present, create one
+          if !check_lock(k)
             create_lock(k)
+          end
           if !check_transferred?(k, @done_slides)
             run_path = run_name_path(snfs, k)
             md5_file = "#{run_path}/md5sum_check.txt"
@@ -149,7 +174,7 @@ class Solid_transfer
                 rm_md5_from_file(md5_file, filename)
                 Helpers::log("md5s did not match. removing file: #{file}")
                 # remove the file from ardmore
-                FileUtils.rm file 
+                FileUtils.rm_rf file 
               end
               if !/csfasta/.match(p) && !/qual/.match(p)
                 rawdata = FALSE

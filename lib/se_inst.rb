@@ -278,7 +278,13 @@ class Se_inst
         files = ssh.exec! "ls /*/r*/solid*/*/.slide_done.txt"
       else 
         Helpers::log("Searching for files on instrument..")
-        files = ssh.exec! "find /*/r*/solid*/*/*/r*.*/lib*/ -follow " +
+
+#       search for all of the results directory
+#        files = ssh.exec! "find /*/r*/solid*/*/*/r*.*/lib*/ -follow " +
+#                          "-name \"*csfasta\" -o -name \"*qual\" " +
+#                          "-o -name \"*Stat*txt\""
+        # search for the files in the sym link .../results/..
+        files = ssh.exec! "find /*/r*/solid*/*/*/results/lib*/ -follow " +
                           "-name \"*csfasta\" -o -name \"*qual\" " +
                           "-o -name \"*Stat*txt\""
       end

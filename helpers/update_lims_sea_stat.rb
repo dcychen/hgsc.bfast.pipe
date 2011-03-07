@@ -144,20 +144,36 @@ def process_sea(path)
   false 
 end
 
+# returns the se name and start time
+def sea_start(sea_dir)
+  line = {}
+  line[:name] = sea_dir.split("/")[-1]
+  line[:start] = Helpers::start_end_time_output(sea_dir).split(",")[0]
+  line
+end
+
 # Main
 #
 puts Dir.pwd
+
+# grab the all of the stats
 r_value = process_sea(Dir.pwd)
+
+#grab the start time only
+if ARGV[0] == "start"
+  r_value = sea_start(Dir.pwd)
+end
+
 cmd = ""
 if r_value != false
-  cmd = "curl -m 120 -d \""
+  cmd = "/hgsc_software/java/jdk1.6.0_05/bin/java -jar " +
+        "/users/p-lims/programs/analysis-data/solid2Lims.jar put \""
   r_value.each do |k,v|
      cmd = cmd + "#{k}=#{v}&"
   end
   tmp = cmd.split("&")
   
-  cmd = tmp.join("&") + "\" -X POST "+
-        "http://lims-2.hgsc.bcm.tmc.edu:8180/gen2lims-reporting/jaxrs/report/csvparse"
+  cmd = tmp.join("&") + "\""
   puts cmd
   system(cmd)
 end 

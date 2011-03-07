@@ -128,8 +128,9 @@ module Helpers
   
   def self.remove_lims(sea)
     cmd = "\n### remove from LIMS\n"
-    cmd << "curl -m 120 -d \"name=#{sea}\" -X DELETE " +
-           "http://lims-2.hgsc.bcm.tmc.edu:8180/gen2lims-reporting/jaxrs/report/csvparse"
+    cmd << "/hgsc_software/java/jdk1.6.0_05/bin/java -jar " +
+           "/users/p-lims/programs/analysis-data/solid2Lims.jar delete " +
+           "\"name=#{sea}\""
   end
 
   def self.create_starting_script(sea, special_run)

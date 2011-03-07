@@ -18,7 +18,7 @@ require 'moab_dealer'
 
 #
 class MuApp
-  VERSION = '0.0.1'
+  VERSION = '1.0.0'
   
   attr_reader :options
 
@@ -80,10 +80,6 @@ class MuApp
 
   def process_options
 #		puts @options.marshal_dump
-#      @options.each {|x,y| puts "#{x} + #{y}"}
-#			exit
-#    case @options.action 
-#      when "
   end
 
   def output_options
@@ -154,10 +150,8 @@ class MuApp
     error "Not valid action" unless check
 
     outdir = @outdir + "/" + @project + "/" + @sub_dir
-#    puts "creating directory: #{outdir}" 
-#    FileUtils.mkpath(outdir)
     FileUtils.mkpath("#{outdir}/moab_logs")
-    run_file = "#{outdir}/run_mcds.sh"
+    run_file = "#{outdir}/run_mu.sh"
     if File.exists?(run_file)
       FileUtils.rm(run_file)
     end
@@ -265,7 +259,7 @@ app.run
 
 __END__
 Usage:
- mdcs_driver.rb [options]
+ mu_driver.rb [options]
 
 Options:
  -h, --help           Displays help message
@@ -279,7 +273,7 @@ Options:
  --snps               calls snps on the given bam
  --all                run all of the actions (does not include --rg)
 
- --rg                 run rg fix on header
+ --rg                 run rg fix on bam
  
  Parameters
  -p, --project        project name of the samples
@@ -289,19 +283,20 @@ Options:
  -d, --outdir         path of the base directory -- base_dir/project/..
  -c, --c_design       capture_design
  -q, --queue          cluster queue. default: normal
-     --hg18           using human ref 18 (default with hg19) 
+     --hg18           using human ref 18 (defaults with hg19) 
      --rg_id          rg id of the group (0,1,2..) defaults at 0.
      --sample         name of the sample
 
 
 Example:
  Post processing all of the steps - merge, mark dups, cap_stat cap_nodupstat, snp calls
- $ mu_driver.rb --merge --cap_dup -p test -s ab1 -n ab1 -b "bam1 bam2 ..." -c c_design
- $ mu_driver.rb --all -p test -s ab1 -n ab1 -b "bam1 bam2 ..." -c c_design
+ $ ruby mu_driver.rb --all -p test -s ab1 -o ab1 -b "bam1 bam2 ..." -c c_design
 
  Post processing of the single steps 
- $ mu_driver.rb --[merge|dups|cap_dup|cap_nodup|snps|all] -p test -s ab1 -b "bam|bams" [-c c_design]
+ $ ruby mu_driver.rb --[merge|dups|cap_dup|cap_nodup|snps|all] -p test -s ab1 -b "bam|bams" [-c c_design]
+ $ ruby mu_driver.rb --merge --cap_dup -p test -s ab1 -n ab1 -b "bam1 bam2 ..." -c c_design
+
 
  Specifically for rg fixes only
- $ mu_driver.rb --rg -d outdir -p proj_name -s lib_name -o run_name [--rg_id num] 
+ $ ruby mu_driver.rb --rg -d outdir -p proj_name -s lib_name -o run_name [--rg_id num] 
                      --sample sample_name -b "bam file" 

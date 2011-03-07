@@ -7,11 +7,6 @@
 # calls the run method for the specified one.
 #
 # Author: David Chen
-#$main_dir = File.dirname(File.dirname(__FILE__))
-
-#require 'yaml'
-#$: << File.join(File.dirname(File.dirname($0)), "lib")
-#require 'helpers'
 
 class Mu_actions
   def initialize(action_string)
