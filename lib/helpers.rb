@@ -210,4 +210,14 @@ module Helpers
            tmp_mode + DELIMITER + tmp_gatk
   end
   
+  # loads the given config file
+  def self.load_config_file(file)
+    obj = ""
+    File.open(file, "r") do |infile|
+      while (line = infile.gets)
+        obj << line
+      end
+    end
+    return YAML::load(obj)
+  end
 end

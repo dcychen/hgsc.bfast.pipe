@@ -61,17 +61,5 @@ class Mu_actions
       Helpers::log "Loading action: #{f}"
       require f
     end
-#    load_config_file
-  end
-
-  def load_config_file
-#    config_file = $main_dir + "/etc/config.yaml"
-    obj = ""
-    File.open(config_file, "r") do |infile|
-      while (line = infile.gets)
-        obj << line
-      end
-    end
-    $config = YAML::load(obj)
   end
 end

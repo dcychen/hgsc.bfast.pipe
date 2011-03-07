@@ -27,7 +27,7 @@ class MuApp
     @stdin       = stdin
     @options     = OpenStruct.new
     main_dir = File.dirname(File.dirname(__FILE__))
-    $config = load_config_file("#{main_dir}/etc/config.yaml")
+    $config = Helpers::load_config_file("#{main_dir}/etc/config.yaml")
   end
 
   # Parse options, check arguments, then process the command
@@ -97,7 +97,6 @@ class MuApp
     if @options.config != nil
       if File.exist?(@options.config)
         load_config_file 
-#puts @config
         @config.each do |k, v|
           @project = v
 
@@ -191,6 +190,8 @@ class MuApp
       moab(run_file, "#{@outname}.snps", mu_cmd[0], @queue, mu_cmd[1], dep)
     end
     Dir.chdir(outdir)
+    
+    # submits the job
     system("sh #{run_file}")
   end
 
@@ -240,16 +241,6 @@ class MuApp
 
   def error(msg)
     $stderr.puts "ERROR: " + msg + "\n\n"; output_usage; exit 1
-  end
-
-  def load_config_file(file)
-    obj = ""
-    File.open(file, "r") do |infile|
-      while (line = infile.gets)
-        obj << line
-      end
-    end
-    return YAML::load(obj)
   end
 end
 

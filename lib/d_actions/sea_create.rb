@@ -6,7 +6,7 @@ class SEA_create
   end
 
   def run(params)
-    perform_create(params[:sea], params[:c_design], params[:force_mp], 
+    perform_create(params[:sea], params[:ref], params[:c_design], params[:force_mp], 
                    params[:force_pe], params[:pival], params[:no_trans_check],
                    params[:special_run])
   end
@@ -30,7 +30,7 @@ class SEA_create
     sds.each_with_index {|s,i| Helpers::log("#{i}. #{s}", 1) }
   end
 
-  def perform_create(sea, c_design, force_mp, force_pe, pival, no_trans_check,
+  def perform_create(sea, ref, c_design, force_mp, force_pe, pival, no_trans_check,
                      special_run)
     # A. check /stornext/snfs(1/4)/next-gen/solid/analysis/solid0312 to see 
     #    if the SEA directory exists. 
@@ -87,6 +87,7 @@ class SEA_create
 
     bf_config = Yaml_template.new.to_s
     bf_config.gsub!(/__RN__/        , sea.to_s)
+    bf_config.gsub!(/__REF__/       , ref)
     bf_config.gsub!(/__IMP__/       , mp_detection)
     # This is a little bit confusing but it is the only option since we don't have a marker
     # in the SE names for PE data (for v4 we can check the raw data filenames)

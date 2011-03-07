@@ -24,6 +24,8 @@ class App
     @arguments     = arguments
     @stdin         = stdin
     @valid_actions = /(create|remove)/
+    main_dir = File.dirname(File.dirname(__FILE__))
+    $config = Helpers::load_config_file("#{main_dir}/etc/config.yaml")
 
     # Set defaults
     @options         = OpenStruct.new
@@ -93,7 +95,7 @@ class App
       @sea            = @r_name.nil? ? nil : Sequence_event.new(@r_name)
       @c_design       = @options.c_design || nil
       @queue          = @options.queue    || "normal"
-      @ref            = @options.ref 
+      @ref            = @options.ref      || $config["h18_ref"]
       @action         = @options.action
       @force_mp       = @options.force_mp || false
       @force_pe       = @options.force_pe || false
