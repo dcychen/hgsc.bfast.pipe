@@ -32,6 +32,11 @@ class SEA_create
 
   def perform_create(sea, ref, c_design, force_mp, force_pe, pival, no_trans_check,
                      special_run)
+    # make sure the reference file exists
+    if !File.exists?(ref)
+      Helpers::log("The reference file does not exist!!",1)
+    end
+    
     # A. check /stornext/snfs(1/4)/next-gen/solid/analysis/solid0312 to see 
     #    if the SEA directory exists. 
     #    Bail out: printing the path to the SEA dir found.
@@ -104,6 +109,8 @@ class SEA_create
     Helpers::create_dir(sea_dir + "/input")
     Helpers::link_raw_data(sea_dir + "/input", raw_data)
 
+    # creates metadata file
+    Helpers::create_metadata(sea_dir, ref)
     # E. Dump the config
     Helpers::dump_config(sea, bf_config, special_run)
 

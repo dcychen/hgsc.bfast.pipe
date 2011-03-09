@@ -21,6 +21,6 @@ rg:
   rg_mem: 1000
 samtools: /stornext/snfs0/next-gen/yw14-scratch/samtools-0.1.7a/samtools
 h18_ref: /stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/hsap_36.1_hg18.fa
-h19_ref: /stornext/snfs0/next-gen/solid/bf.references/h/GRCh37-lite/GRCh37-lite.fa
+h19_ref: /stornext/snfs0/next-gen/solid/bf.references/h/GRCh37-lite/GRCh37-lite.hg19.fa 
 outdir: /stornext/snfs0/next-gen/solid/p-merge-work/merges
 queue: normal

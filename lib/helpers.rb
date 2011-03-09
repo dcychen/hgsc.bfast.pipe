@@ -184,7 +184,7 @@ module Helpers
 
   # dumps the meta data of the SEA
   def self.gather_meta_data(sea_dir)
-    tmp_ref = "hg18"
+    tmp_ref = "/stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/hsap_36.1_hg18.fa"
     tmp_bfast = "0.6.4d"
     tmp_picard = "1.7"
     tmp_mode = Helpers::check_fr?(sea_dir.split("/")[-1])
@@ -208,6 +208,13 @@ module Helpers
     end
     return tmp_ref + DELIMITER + tmp_bfast + DELIMITER + tmp_picard + DELIMITER +
            tmp_mode + DELIMITER + tmp_gatk
+  end
+  
+  # creates the metadata file
+  def self.create_metadata(path, ref)
+    File.open("#{path}/metadata.txt", 'w') do |f|
+      f.puts("REF #{ref}")
+    end
   end
   
   # loads the given config file
