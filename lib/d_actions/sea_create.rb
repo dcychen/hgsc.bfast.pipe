@@ -6,7 +6,10 @@ class SEA_create
   end
 
   def run(params)
-    perform_create(params[:sea], params[:ref], params[:c_design], params[:force_mp], 
+    perform_create(params[:sea], params[:ref], params[:java],
+                   params[:bfast], params[:bfast_version], 
+                   params[:picard], params[:picard_version], 
+                   params[:c_design], params[:force_mp], 
                    params[:force_pe], params[:pival], params[:no_trans_check],
                    params[:special_run])
   end
@@ -30,7 +33,9 @@ class SEA_create
     sds.each_with_index {|s,i| Helpers::log("#{i}. #{s}", 1) }
   end
 
-  def perform_create(sea, ref, c_design, force_mp, force_pe, pival, no_trans_check,
+  def perform_create(sea, ref, java, bfast, bfast_version, 
+                     picard, picard_version, c_design, 
+                     force_mp, force_pe, pival, no_trans_check,
                      special_run)
     # make sure the reference file exists
     if !File.exists?(ref)
@@ -94,6 +99,9 @@ class SEA_create
     bf_config.gsub!(/__RN__/        , sea.to_s)
     bf_config.gsub!(/__REF__/       , ref)
     bf_config.gsub!(/__IMP__/       , mp_detection)
+    bf_config.gsub!(/__JAVA__/      , java)
+    bf_config.gsub!(/__BFAST__/     , bfast)
+    bf_config.gsub!(/__PICARD__/    , picard)
     # This is a little bit confusing but it is the only option since we don't have a marker
     # in the SE names for PE data (for v4 we can check the raw data filenames)
     bf_config.gsub!(/__PE__/        , pe_detection)
@@ -110,12 +118,24 @@ class SEA_create
     Helpers::link_raw_data(sea_dir + "/input", raw_data)
 
     # creates metadata file
-    Helpers::create_metadata(sea_dir, ref)
+    Helpers::create_metadata(sea_dir, ref, bfast_version, picard_version, 
+                             run_mode(mp_detection, pe_detection))
     # E. Dump the config
     Helpers::dump_config(sea, bf_config, special_run)
 
     # F. Create go.sh on dir
     puts Helpers::create_starting_script(sea, special_run)
     Helpers::log "Done."
+  end
+
+  # determines the run mode: FR, PE, MP
+  def run_mode(mp, pe)
+    if pe == "1"
+      return "PE"
+    elsif mp == "1"
+      return "MP"
+    else
+      return "FR"
+    end
   end
 end

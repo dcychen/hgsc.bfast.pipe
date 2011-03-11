@@ -106,6 +106,14 @@ class App
       log "Forcing MP mode detected" if @force_mp
       log "Forcing PE mode detected" if @force_pe
       log "No transfer file check detected" if @no_trans_check
+
+
+      # parameters for the bf.config.yaml file
+      @java           = $config["java"]
+      @bfast          = $config["bfast"]["path"]
+      @bfast_version  = $config["bfast"]["version"]
+      @picard         = $config["picard"]["path"]
+      @picard_version = $config["picard"]["version"]
     end
     
     def output_help
@@ -148,6 +156,12 @@ class App
         :special_run    => @special_run,
         :ref            => @ref,
         :pival          => @pival  ,
+        # params for bf.config.yaml       
+        :java           => @java,
+        :bfast          => @bfast,
+        :bfast_version  => @bfast_version,
+        :picard         => @picard,
+        :picard_version => @picard_version,
       }
     end
 

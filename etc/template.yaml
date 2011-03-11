@@ -8,11 +8,11 @@ global_options:
  moab_queue: normal
  picard_validation: __PIVAL__
  threads: 8
- bfast_bin: /stornext/snfs5/next-gen/software/bfast/versions/bfast-0.6.4d/bfast
+ bfast_bin: __BFAST__ 
  bfast2_bin: /stornext/snfs5/next-gen/software/bfast/versions/bfast.git.bfast2/bfast
  samtools_bin: /stornext/snfs5/next-gen/software/samtools-0.1.6
- picardjars: /stornext/snfs5/next-gen/software/picard-tools/current
- java_vm: /stornext/snfs5/next-gen/software/jdk1.6.0_01/bin/java
+ picardjars: __PICARD__
+ java_vm: __JAVA__
  trackdir: ./track_jobs
  space: CS
  fasta_file_name: __REF__

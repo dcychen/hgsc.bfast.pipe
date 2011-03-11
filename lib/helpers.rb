@@ -186,7 +186,7 @@ module Helpers
   def self.gather_meta_data(sea_dir)
     tmp_ref = "/stornext/snfs5/next-gen/solid/bf.references/h/hsap.36.1.hg18/hsap_36.1_hg18.fa"
     tmp_bfast = "0.6.4d"
-    tmp_picard = "1.7"
+    tmp_picard = "1.07"
     tmp_mode = Helpers::check_fr?(sea_dir.split("/")[-1])
     tmp_gatk = "NA"
 
@@ -211,9 +211,13 @@ module Helpers
   end
   
   # creates the metadata file
-  def self.create_metadata(path, ref)
+  def self.create_metadata(path, ref, bfast, picard, mode, gatk = "NA")
     File.open("#{path}/metadata.txt", 'w') do |f|
       f.puts("REF #{ref}")
+      f.puts("BFAST #{bfast}")
+      f.puts("PICARD #{picard}")
+      f.puts("MODE #{mode}")
+      f.puts("GATK #{gatk}")
     end
   end
   
