@@ -64,7 +64,9 @@ class App
       opts.on('-n', '--no_trans_check') {    @options.no_trans_check = true }
       opts.on('-s', '--special_run')    {    @options.special_run = true }
       opts.on('-p', '--pival p')        {|p| @options.pival    = p.upcase }
-            
+      opts.on('--rg_lb       l')        {|l| @options.rg_lb    = l }
+      opts.on('--rg_sm       s')        {|s| @options.rg_sm    = s }
+
       log "Processing arguments"
       opts.parse!(@arguments) rescue return false
       if ! @options.pival.nil? and ! %w(STRICT LENIENT SILENT).include?(@options.pival)
@@ -102,6 +104,8 @@ class App
       @no_trans_check = @options.no_trans_check || false
       @special_run    = @options.special_run || false
       @pival          = @options.pival || "STRICT"
+      @rg_lb          = @options.rg_lb || "unknown"
+      @rg_sm          = @options.rg_sm || "unknown"
       log "picard validation mode: #{@pival}"
       log "Forcing MP mode detected" if @force_mp
       log "Forcing PE mode detected" if @force_pe
@@ -155,13 +159,15 @@ class App
         :no_trans_check => @no_trans_check,
         :special_run    => @special_run,
         :ref            => @ref,
-        :pival          => @pival  ,
+        :pival          => @pival,
         # params for bf.config.yaml       
         :java           => @java,
         :bfast          => @bfast,
         :bfast_version  => @bfast_version,
         :picard         => @picard,
         :picard_version => @picard_version,
+        :rg_lb          => @rg_lb,
+        :rg_sm          => @rg_sm,
       }
     end
 
@@ -198,10 +204,13 @@ Options:
  -q, --queue          cluster queue     [normal]
  -p, --pival          Picard validation [STRINGENT] (STRICT|LENIENT|SILENT)
 
+ --rg_lb              library name
+ --rg_sm              sample name
+
 Valid actions:
  create: create the analysis dir and config file
-         $ analysis_driver.rb -a sea_create -r RUN 
-         $ analysis_driver.rb -a sea_create -r RUN -c C_DESIGN_DIR
+         $ analysis_driver.rb -a sea_create -r RUN -f reference
+         $ analysis_driver.rb -a sea_create -r RUN -f reference -c C_DESIGN_DIR
 
  remove: check if analysis exists
          $ analysis_driver.rb -a sea_remove -r RUN

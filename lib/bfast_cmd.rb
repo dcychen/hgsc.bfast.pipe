@@ -123,16 +123,23 @@ class BfastCmd
   end
 
   # Regenerate the header so we have more useful information on it
-  def gen_header
+  def gen_rg
     cmd = "#{@config.global_java_vm} " + 
-    cmd << "-jar #{dist_dir}/#{@config.header_regen_jar} "
-    cmd << "type=" + @config.header_sq_type + " "
+          "-jar #{dist_dir}/#{@config.rg_s_jar} " +
+          "SampleID=#{@config.rg_sm} " +
+          "Library=#{@config.rg_lb} " +
+          "Platform=#{@config.rg_pl} " +
+          "PlatformUnit=#{@config.rg_pu} " +
+          "Center=#{@config.rg_cn} " +
+          "RGTag=#{@config.rg_id} " +
+          "Input=#{bam_file_sorted_dups} " +
+          "Output=#{bam_file_sorted_dups_rg} "
+#    cmd << "type=" + @config.header_sq_type + " "
     #%w{ID PL PU LB DS DT SM CN}.each do |t|
     # t_value = eval("@config.post_rg_" + t.downcase).to_s
     # cmd << "#{t}=" + t_value + " "
     #end
-    cmd << "I=#{bam_file_sorted_dups} "
-    cmd << "O=#{bam_file_sorted_dups_fix_header} "
+
   end
 
   # computes the stats
@@ -153,11 +160,11 @@ class BfastCmd
     "-Xmx6000M CaptureStatsBAM5 " +
     "-o #{@config.capture_stats_dir}/#{root_name} -t " +
     "#{@config.capture_chip_design} " +
-    "-i #{bam_file_sorted_dups} -w -d"
+    "-i #{bam_file_sorted_dups_rg} -w -d"
   end
 
   def bam_reads_validator
-    read_val_core + " #{bam_file_sorted_dups} #{@config.global_run_dir}" +
+    read_val_core + " #{bam_file_sorted_dups_rg} #{@config.global_run_dir}" +
     " ./output/#{root_name}.read_val_log.txt"
   end
 
@@ -204,7 +211,7 @@ class BfastCmd
   def stats_core
     "#{@config.global_java_vm} "   +
     "-jar #{dist_dir}/#{@config.stats_s_jar} " +
-    " #{bam_file_sorted_dups} "
+    " #{bam_file_sorted_dups_rg} "
   end
 
   def read_val_core
@@ -286,8 +293,8 @@ class BfastCmd
     "./output/#{root_name}.sorted.dups.bam"
   end
 
-  def bam_file_sorted_dups_fix_header
-    "./output/#{root_name}.sorted.dups.with.header.bam"
+  def bam_file_sorted_dups_rg
+    "./output/#{root_name}.sorted.dups.rg.bam"
   end
 
   def set_current_split(fastq_file)

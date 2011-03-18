@@ -58,7 +58,7 @@ def find_bams(s_dir)
   Find.find(s_dir) do |f|
     bams << f if File.file?(f) and
                  (f =~ %r{sorted.dups.bam$} or
-                  f =~ %r{sorted.dups.with.header.bam$} or
+                  f =~ %r{sorted.dups.rg.bam$} or
                   f =~ %r{merged.marked.bam$})
   end
   bams

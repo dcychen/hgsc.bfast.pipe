@@ -38,14 +38,6 @@ local_options:
 post_options:
  algorithm: 4
  moab_resources: "pmem=4000mb"
- rg_id:
- rg_pl: 
- rg_pu: 
- rg_lb: 
- rg_ds: 
- rg_dt: 
- rg_sm: 
- rg_cn: Baylor
 tobam_options:
  moab_resources: "pmem=4000mb"
  java_vm_mem:   "4g"
@@ -57,9 +49,18 @@ dups_options:
  java_vm_mem: "8g"
 final_options:
  moab_resources: "pmem=8000mb"
-header_options:
- regen_jar: java/bam.header.creation/bam.header.creation.jar
- sq_type: hsap36.1
+rg_options:
+ s_jar: java/AddRGToBam/AddRGToBam.jar
+ id: 0
+ pl: SOLiD
+ pu: __RN__
+ lb: __LIBRARY__
+ ds:
+ dt:
+ sm: __SAMPLE__
+ cn: BCM
+ pg_id: BFAST
+ pg_vn: __PGVER__
  moab_resources: "pmem=4000mb"
 stats_options:
  moab_resources: "pmem=4000mb"

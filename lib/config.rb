@@ -8,7 +8,7 @@
 class Config
   def initialize(config)
     %w(input global bwaaln match local post tobam
-       sort dups final header stats countreads capture success).each do |r|
+       sort dups final rg stats countreads capture success).each do |r|
       set config, r
     end
   end

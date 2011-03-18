@@ -50,7 +50,7 @@ re_tobam  = config.tobam_moab_resources
 re_sort   = config.sort_moab_resources
 re_dups   = config.dups_moab_resources
 re_final  = config.final_moab_resources
-re_header = config.header_moab_resources
+re_rg = config.rg_moab_resources
 re_stats  = config.stats_moab_resources
 re_cap    = config.capture_moab_resources
 
@@ -85,15 +85,11 @@ end
 moab.add_job_to_file("merge2dups", cmds.final_merge, "")
 
 # Sort and mark dups in the final BAM
-#dep = moab.add_job("sort", cmds.sort, "", re_sort, [dep])
-#dep = moab.add_job("dups", cmds.dups, "", re_dups, [dep])
- 
 moab.add_job_to_file("merge2dups", cmds.sort, "")
 moab.add_job_to_file("merge2dups", cmds.dups, "")
+moab.add_job_to_file("merge2dups", cmds.gen_rg, "")
 dup_dep = moab.add_job_from_file("merge2dups", "", re_final, final_deps)
 
-#Regenerate the header so we have better and more clear @SQ entries
-#dep = moab.add_job("regen_bam_header", cmds.gen_header, "", re_header, [dep])
 
 # Run stats
 s_deps = []
@@ -114,26 +110,13 @@ if config.global_input_CAP == 1
   s_deps << moab.add_job("capture_stats", cmds.capture_stats, "", re_cap, [dup_dep])
 end
 
-
-# If we completed the SEA, we should flag the DB so we know
-# the analysis completed
-#fdb_deps = config.global_input_CAP == 0 ? s_deps : [dep]
-#dep = moab.add_job("flag_db_completed", cmds.fdb_completed, "", nil, fdb_deps)
-#moab.add_job("email_success", cmds.email_success, "", nil, [dep])
-
 # Clean up dirs
-#clean_deps = config.global_input_CAP == 0 ? s_deps : [dep]
-#email_deps = moab.add_job("clean_up", cmds.clean_up, "", nil, clean_deps)
 moab.add_job_to_file("clean2fin", cmds.clean_up, "")
 
 # Email if the analysis went well
-#email_deps = config.global_input_CAP == 0 ? s_deps : [dep]
-#moab.add_job("email_success", cmds.email_success, "", nil, [email_deps])
 moab.add_job_to_file("clean2fin", cmds.email_success, "")
 
 # saves the finished time stamp
-#moab.add_job("finish_time", "#{File.dirname(File.dirname($0))}/helpers/create_time.sh " +
-#            "END time_stamps.txt", "", nil, [email_deps])
 moab.add_job_to_file("clean2fin", "#{File.dirname(File.dirname($0))}" +
             "/helpers/create_time.sh END time_stamps.txt", "")
 

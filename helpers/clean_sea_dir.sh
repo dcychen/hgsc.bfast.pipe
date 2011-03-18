@@ -21,8 +21,8 @@ error()
 echo "rm -f ./cluster_JOBS.sh ./go.sh ./metric* ./email_info.txt"
 rm -f ./cluster_JOBS.sh ./go.sh ./metric* 
 #rm -f ./metric*
-echo "rm -f ./output/*merged.bam ./output/*sorted.bam"
-rm -f ./output/*merged.bam ./output/*sorted.bam
+echo "rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam" 
+rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam
 echo "rm -rf reads ./output/split*"
 rm -rf reads ./output/split*
 echo "rm -f ./moab_logs/*job2log*"

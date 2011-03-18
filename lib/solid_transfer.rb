@@ -74,8 +74,12 @@ class Solid_transfer
         if check_transferred?(se, @done_slides)
           Helpers::log("#{se} has been transferred. skipping.")
         else
-          if !check_lock(se) #|| lock_remove_after_day(1, se)
-            create_lock(se)
+          if lock_remove_after_day(@NUM_DAY_LOCK, se)
+            # if lock file is not present, create one
+            if !check_lock(se)
+              create_lock(se)
+            end
+
             check_new?(se, @new_slides, send_email)
             data[se].each do |p|
               rsync(p, dest_path(snfs, p, se))
@@ -93,9 +97,8 @@ class Solid_transfer
      lock_f = "#{ENV['HOME']}/.hgsc_solid/#{@machine}/#{se}.lock"
      if File.exist?(lock_f)
        lock_f_t = File.new(lock_f).mtime
-       active_f_t = File.new("#{ENV['HOME']}/.hgsc_solid/#{@machine}/" + 
-                             "#{@machine}_active_transfer.txt").mtime
-       difference = active_f_t - lock_f_t
+       now = Time.now
+       difference = now - lock_f_t
        if difference > (TimeHelpers::SECS_IN_DAY * day.to_i)
          return true
        else
