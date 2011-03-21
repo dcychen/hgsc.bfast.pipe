@@ -4,7 +4,7 @@ bfast:
   version: 0.6.4d
   path: /stornext/snfs5/next-gen/software/bfast/versions/bfast-0.6.4d/bfast
 picard:
-  version: 1.38
+  version: 1.41
   path: /stornext/snfs5/next-gen/software/picard-tools/current
   merge_jar: /stornext/snfs5/next-gen/software/picard-tools/current/MergeSamFiles.jar
   merge_mem: 8000

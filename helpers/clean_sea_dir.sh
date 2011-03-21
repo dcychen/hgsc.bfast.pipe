@@ -20,9 +20,16 @@ error()
 
 echo "rm -f ./cluster_JOBS.sh ./go.sh ./metric* ./email_info.txt"
 rm -f ./cluster_JOBS.sh ./go.sh ./metric* 
-#rm -f ./metric*
-echo "rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam" 
-rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam
+
+if [ $1 == "rm_dups" ]
+then
+  echo "rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam" 
+  rm -f ./output/*merged.bam ./output/*sorted.bam ./output/*dups.bam
+else 
+  echo "rm -f ./output/*merged.bam ./output/*sorted.bam"
+  rm -f ./output/*merged.bam ./output/*sorted.bam
+fi
+
 echo "rm -rf reads ./output/split*"
 rm -rf reads ./output/split*
 echo "rm -f ./moab_logs/*job2log*"

@@ -124,16 +124,20 @@ class BfastCmd
 
   # Regenerate the header so we have more useful information on it
   def gen_rg
-    cmd = "#{@config.global_java_vm} " + 
-          "-jar #{dist_dir}/#{@config.rg_s_jar} " +
-          "SampleID=#{@config.rg_sm} " +
-          "Library=#{@config.rg_lb} " +
-          "Platform=#{@config.rg_pl} " +
-          "PlatformUnit=#{@config.rg_pu} " +
-          "Center=#{@config.rg_cn} " +
-          "RGTag=#{@config.rg_id} " +
-          "Input=#{bam_file_sorted_dups} " +
-          "Output=#{bam_file_sorted_dups_rg} "
+    if @config.rg_no_rg == FALSE
+      cmd = "#{@config.global_java_vm} " + 
+            "-jar #{dist_dir}/#{@config.rg_s_jar} " +
+            "SampleID=#{@config.rg_sm} " +
+            "Library=#{@config.rg_lb} " +
+            "Platform=#{@config.rg_pl} " +
+            "PlatformUnit=#{@config.rg_pu} " +
+            "Center=#{@config.rg_cn} " +
+            "RGTag=#{@config.rg_id} " +
+            "Input=#{bam_file_sorted_dups} " +
+            "Output=#{bam_file_sorted_dups_rg} "
+     else
+      cmd = "# rg tag is turned off"
+     end
 #    cmd << "type=" + @config.header_sq_type + " "
     #%w{ID PL PU LB DS DT SM CN}.each do |t|
     # t_value = eval("@config.post_rg_" + t.downcase).to_s
@@ -160,11 +164,11 @@ class BfastCmd
     "-Xmx6000M CaptureStatsBAM5 " +
     "-o #{@config.capture_stats_dir}/#{root_name} -t " +
     "#{@config.capture_chip_design} " +
-    "-i #{bam_file_sorted_dups_rg} -w -d"
+    "-i #{bam_file_sorted_dups} -w -d"
   end
 
   def bam_reads_validator
-    read_val_core + " #{bam_file_sorted_dups_rg} #{@config.global_run_dir}" +
+    read_val_core + " #{bam_file_sorted_dups} #{@config.global_run_dir}" +
     " ./output/#{root_name}.read_val_log.txt"
   end
 
@@ -193,7 +197,11 @@ class BfastCmd
   # Clean up the analysis directory 
   # rm -rf cluster_JOBS.sh go.sh reads
   def clean_up
-    cleaner_script = File.dirname(__FILE__) + "/../helpers/clean_sea_dir.sh"
+    if @config.rg_no_rg == FALSE 
+      cleaner_script = File.dirname(__FILE__) + "/../helpers/clean_sea_dir.sh rm_dups"
+    else
+      cleaner_script = File.dirname(__FILE__) + "/../helpers/clean_sea_dir.sh dups"
+    end
   end
 
   private
@@ -211,7 +219,7 @@ class BfastCmd
   def stats_core
     "#{@config.global_java_vm} "   +
     "-jar #{dist_dir}/#{@config.stats_s_jar} " +
-    " #{bam_file_sorted_dups_rg} "
+    " #{bam_file_sorted_dups} "
   end
 
   def read_val_core

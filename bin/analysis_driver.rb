@@ -64,6 +64,7 @@ class App
       opts.on('-n', '--no_trans_check') {    @options.no_trans_check = true }
       opts.on('-s', '--special_run')    {    @options.special_run = true }
       opts.on('-p', '--pival p')        {|p| @options.pival    = p.upcase }
+      opts.on('--no_rg'   )             {    @options.no_rg = "true" }
       opts.on('--rg_lb       l')        {|l| @options.rg_lb    = l }
       opts.on('--rg_sm       s')        {|s| @options.rg_sm    = s }
 
@@ -103,6 +104,7 @@ class App
       @force_pe       = @options.force_pe || false
       @no_trans_check = @options.no_trans_check || false
       @special_run    = @options.special_run || false
+      @no_rg          = @options.no_rg || "false"
       @pival          = @options.pival || "STRICT"
       @rg_lb          = @options.rg_lb || "unknown"
       @rg_sm          = @options.rg_sm || "unknown"
@@ -166,6 +168,7 @@ class App
         :bfast_version  => @bfast_version,
         :picard         => @picard,
         :picard_version => @picard_version,
+        :no_rg          => @no_rg,
         :rg_lb          => @rg_lb,
         :rg_sm          => @rg_sm,
       }
@@ -204,6 +207,7 @@ Options:
  -q, --queue          cluster queue     [normal]
  -p, --pival          Picard validation [STRINGENT] (STRICT|LENIENT|SILENT)
 
+ --no_rg              turn off rg tags
  --rg_lb              library name
  --rg_sm              sample name
 

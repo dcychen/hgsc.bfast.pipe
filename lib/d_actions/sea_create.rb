@@ -10,8 +10,8 @@ class SEA_create
                    params[:bfast], params[:bfast_version], 
                    params[:picard], params[:picard_version], 
                    params[:c_design], params[:force_mp], 
-                   params[:force_pe], params[:rg_lb], params[:rg_sm],
-                   params[:pival], params[:no_trans_check],                     
+                   params[:force_pe], params[:no_rg], params[:rg_lb], 
+                   params[:rg_sm], params[:pival], params[:no_trans_check],                     
                    params[:special_run])
   end
 
@@ -36,7 +36,7 @@ class SEA_create
 
   def perform_create(sea, ref, java, bfast, bfast_version, 
                      picard, picard_version, c_design, 
-                     force_mp, force_pe, rg_lb, rg_sm,
+                     force_mp, force_pe, no_rg, rg_lb, rg_sm,
                      pival, no_trans_check,
                      special_run)
     # make sure the reference file exists
@@ -114,6 +114,7 @@ class SEA_create
     bf_config.gsub!(/__CD__/        , c_design ? c_design : "" )
     bf_config.gsub!(/__PIVAL__/     , pival)
     bf_config.gsub!(/__LIBRARY__/   , rg_lb)
+    bf_config.gsub!(/__RG__/        , no_rg)
     bf_config.gsub!(/__SAMPLE__/    , rg_sm)
     bf_config.gsub!(/__PGVER__/     , bfast_version)
 

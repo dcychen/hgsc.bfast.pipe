@@ -3,7 +3,7 @@
 # This tools creates the necessary cluster JOBS to complete 
 # a SEA (Sequence Event Analysis)
 #
-# Author: David Chen
+# Author: David Rio Deiros, David Chen
 
 $: << File.join(File.dirname(File.dirname($0)), "lib")
 require 'load_libs'
@@ -62,18 +62,12 @@ splits.each do |s|
   if bwaaln_flag
     moab.add_job_to_file("match2bam" , cmds.bwaaln(s), sn)
     moab.add_job_to_file("match2bam" , cmds.local_u  , sn)
-#    dep = moab.add_job("bwaaln"  , cmds.bwaaln(s), sn, re_match)
-#    dep = moab.add_job("local_u" , cmds.local_u  , sn, re_local , [dep])
   else
     moab.add_job_to_file("match2bam" , cmds.match(s), sn)
     moab.add_job_to_file("match2bam" , cmds.local   , sn)
-#    dep = moab.add_job("match" , cmds.match(s), sn, re_match)
-#    dep = moab.add_job("local" , cmds.local   , sn, re_local , [dep])
   end
   moab.add_job_to_file("match2bam", cmds.post, sn)
   moab.add_job_to_file("match2bam", cmds.tobam, sn)
-#  dep = moab.add_job("postp" , cmds.post    , sn, re_post  , [dep])
-#  dep = moab.add_job("tobam" , cmds.tobam   , sn, re_tobam , [dep])
   dep = moab.add_job_from_file("match2bam", sn, re_match)
   moab.blank "----------------"
 
@@ -81,7 +75,6 @@ splits.each do |s|
 end
 
 # when all the previous jobs are completed, we can merge all the bams
-#dep = moab.add_job("merge" , cmds.final_merge, "", re_final)
 moab.add_job_to_file("merge2dups", cmds.final_merge, "")
 
 # Sort and mark dups in the final BAM

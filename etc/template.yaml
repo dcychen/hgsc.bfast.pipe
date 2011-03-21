@@ -50,6 +50,7 @@ dups_options:
 final_options:
  moab_resources: "pmem=8000mb"
 rg_options:
+ no_rg: __RG__
  s_jar: java/AddRGToBam/AddRGToBam.jar
  id: 0
  pl: SOLiD

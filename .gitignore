@@ -7,3 +7,4 @@ java/bam.header.creation/BAMHeaderCreationManifest.txt
 java/raw.bam.reads.validator/ValidateSOLiDBAMManifest.txt
 test/tmp
 java/AddRGToBam/AddRgToBAMManifest.txt
+etc/config.yaml
