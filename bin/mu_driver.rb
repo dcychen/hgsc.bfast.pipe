@@ -26,8 +26,8 @@ class MuApp
     @arguments   = arguments
     @stdin       = stdin
     @options     = OpenStruct.new
-    main_dir = File.dirname(File.dirname(__FILE__))
-    $config = Helpers::load_config_file("#{main_dir}/etc/config.yaml")
+    $main_dir = File.dirname(File.dirname(__FILE__))
+    $config = Helpers::load_config_file("#{$main_dir}/etc/config.yaml")
   end
 
   # Parse options, check arguments, then process the command
@@ -270,7 +270,7 @@ Options:
  -p, --project        project name of the samples
  -s, --sub_dir        sub direcotry in the project, usually lib name
  -o, --outname        name of the files created (or SE run name)
- -b, --bams           list of bams
+ -b, --bams           list of bam(s)
  -d, --outdir         path of the base directory -- base_dir/project/..
  -c, --c_design       capture_design
  -q, --queue          cluster queue. default: normal
