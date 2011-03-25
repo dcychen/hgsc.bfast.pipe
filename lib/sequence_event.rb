@@ -144,7 +144,8 @@ class Sequence_event
     if run_name.match(/p\w_\d+_\d$/) ||
        run_name.match(/s\w_\d+_\d$/) ||
        run_name.match(/s\w_\d+_\d_BC\d+$/) ||
-       run_name.match(/s\w_\d+_\d_bc\d+$/) 
+       run_name.match(/s\w_\d+_\d_bc\d+$/) ||
+       run_name.match(/s\w_\d+_\d_\S+sA$/)
       valid_suffix = true
     end
     return valid_prefix && valid_suffix

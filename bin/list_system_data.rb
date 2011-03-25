@@ -161,6 +161,7 @@ end
 def process_seas(seas)
   seas.each do |s, sd| # sea, sea_data
     Helpers::log("Working on SEA: #{s}")
+    Helpers::log("Dir: #{sd.dir}")
     sd.bams        = find_bams(sd.dir)
     sd.stats_files = find_stats_files(sd.dir)
     Helpers::log("Found BAMs: #{sd.bams.size} STAT_FILEs: #{sd.stats_files.size}")
